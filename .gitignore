@@ -11,4 +11,4 @@ logs
 venv
 .vscode
 config.yaml
-.dataset
+dataset

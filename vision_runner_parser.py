@@ -7,7 +7,6 @@ class VisionRunnerParser:
 
     def parse_from_file(self, file_name_or_path="config.yaml"):
 
-        print(file_name_or_path)
         configs = self._get_configs_from_file(file_name_or_path)
         (train_config_dict, detect_config_dict, annotate_dict) = self._parse_configs(configs)
         train_cfg, detect_cfg = self._config_to_list_of_instances(detect_config_dict, train_config_dict)
@@ -34,14 +33,14 @@ class VisionRunnerParser:
         
         for cfg in configs:
 
-            if configs[cfg]["train"]:
+            if configs[cfg].get("train"):
                 train_config_dict.append(configs[cfg])
 
             
-            if configs[cfg]["detect"]:
+            if configs[cfg].get("detect"):
                 detect_config_dict.append(configs[cfg])
 
-            if configs[cfg]["annotate"]:
+            if configs[cfg].get("annotate"):
                 annotate_config_dict.append(configs[cfg])
 
         return train_config_dict, detect_config_dict, annotate_config_dict

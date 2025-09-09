@@ -46,10 +46,12 @@ class VisionCLI:
                 None
 
             elif self.args.run_mode == "train":
-                vision_runner.train( file_config_or_path)    
+                vision_runner.train( file_config_or_path)  
+
             
             elif self.args.run_mode == "annotate":
                 img_path = self.args.path
+
                 vision_runner.annotate(img_path, file_config_or_path)
             
             elif self.args.run_mode == "live":

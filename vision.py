@@ -1,3 +1,4 @@
+import threading
 import torch
 from ultralytics import YOLO
 import cv2
@@ -104,6 +105,8 @@ class Vision:
 
     def __init__(self):
         logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
+        self.create_rectangle = False
+        self.drawing_rectangle = False
         pass
 
     def train(self, train_cfg_list: List[TrainModelConfig]): 
@@ -116,26 +119,60 @@ class Vision:
         result = model_trained.predict(test_path, show=show)[0]
 
     def _mouse_click_annotate_callback(self, event, x, y, flags, param):
+        if event == cv2.EVENT_MOUSEMOVE:
+            if self.drawing_rectangle:
+                img_copy = self.current_annotation.img.copy()
+                cv2.rectangle(img_copy, self.rectangle_start_point, (x, y), (0, 255, 0), 2)
+                cv2.imshow("Annotation", img_copy)
+        elif event == cv2.EVENT_LBUTTONUP:
+            if self.drawing_rectangle:
+                self.drawing_rectangle = False
+                self.create_rectangle = False
+                self.end_point = (x, y)
+
+                x1, y1 = self.rectangle_start_point
+                x2, y2 = self.end_point
+                bb = BoundingBoxDetected(
+                    label=self.current_label,
+                    box=torch.tensor([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)], dtype=torch.float32),
+                    confidence=1.0
+                )
+                self.annotation[self.file_index].classes_boxes.append([bb])
+
+                # redesenha definitivo
+                self.render_annotation()
+                print(f"Added manual bounding box: {bb}")
+
+
         if event == cv2.EVENT_LBUTTONDOWN:
-            for classes_boxes in self.annotation[self.file_index].classes_boxes:
-                for i, bounding_boxes in enumerate(classes_boxes): 
-                    x1, y1, x2, y2 = bounding_boxes.box
-                    if x1 <= x <= x2 and y1 <= y <= y2:
-                        
-                        excluded_box = False
-                        for bb in self.annotation[self.file_index].excluded_classes_boxes:
-                            excluded_box =  torch.allclose(bb.box, bounding_boxes.box, atol=1e-3)
-                            if excluded_box:
-                                break
+            for i, label in enumerate(self.labels):
+                if 10 <= x <= 200 and 10 + i*40 <= y <= 40 + i*40:
+                    self.current_label = label
+                    print("Label selecionada:", self.current_label)
+                    self.render_annotation()
+            if self.create_rectangle:
+                self.rectangle_start_point = (x, y)
+                self.drawing_rectangle = True
+            else:
+                for classes_boxes in self.annotation[self.file_index].classes_boxes:
+                    for i, bounding_boxes in enumerate(classes_boxes): 
+                        x1, y1, x2, y2 = bounding_boxes.box
+                        if x1 <= x <= x2 and y1 <= y <= y2:
                             
-                        # error when users excludes all annotations
-                        if excluded_box:
-                            self.annotation[self.file_index].excluded_classes_boxes.remove(bounding_boxes)
-                        else:
-                            self.annotation[self.file_index].excluded_classes_boxes.append(bounding_boxes)
-                        self.render_annotation()
-                            # cv2.rectangle(self.annotation[self.file_index].img, (int(x1), int(y1)), (int(x2), int(y2)), self.excluded_color, 3)
-                            # cv2.imshow('image to annotate', self.annotation[self.file_index].img)
+                            excluded_box = False
+                            for bb in self.annotation[self.file_index].excluded_classes_boxes:
+                                excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
+                                if excluded_box:
+                                    break
+                                
+                            # error when users excludes all annotations
+                            if excluded_box:
+                                self.annotation[self.file_index].excluded_classes_boxes.remove(bounding_boxes)
+                            else:
+                                self.annotation[self.file_index].excluded_classes_boxes.append(bounding_boxes)
+                            self.render_annotation()
+                                # cv2.rectangle(self.annotation[self.file_index].img, (int(x1), int(y1)), (int(x2), int(y2)), self.excluded_color, 3)
+                                # cv2.imshow('Annotation', self.annotation[self.file_index].img)
 
     def render_annotation(self):
         self.current_annotation.img = self.current_annotation.original_img.copy()
@@ -144,7 +181,9 @@ class Vision:
         
         self.bounding_box_to_image_box(self.current_annotation.img, self.current_annotation.excluded_classes_boxes, self.excluded_color)
         self.mark_validation_img(self.current_annotation.img, self.current_annotation.valid)
-        cv2.imshow('image to annotate', self.current_annotation.img)
+
+        self.draw_label_buttons(self.current_annotation.img)
+        cv2.imshow('Annotation', self.current_annotation.img)
 
     def save_annotations(self):
         
@@ -167,7 +206,7 @@ class Vision:
                         for box in class_box:
                             excluded_box = False
                             for bb in annotation.excluded_classes_boxes:
-                                excluded_box =  torch.allclose(bb.box, box.box, atol=1e-3)
+                                excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), box.box.to(torch.float32).cpu(), atol=1e-3)
                                 if excluded_box:
                                     break
                     
@@ -190,10 +229,12 @@ class Vision:
     def handle_key(self):
 
         key = cv2.waitKey(0)
-        if key == 83: # right
+        # right
+        if key == 83 or key == ord('g') or key == ord('G'):
             self.file_index = self.file_index + 1
 
-        elif key == 81: # left
+        # left
+        elif key == 81 or key == ord('g') or key == ord('G'):
             self.file_index = self.file_index - 1
 
             if self.file_index < 0:
@@ -213,10 +254,21 @@ class Vision:
                 self.current_annotation.valid = True
             self.render_annotation()
             # self.file_index = self.file_index + 1
+        elif key == ord('r') or key == ord('R'):
+            self.create_rectangle = True
         
         elif key == ord('q') or key == ord('Q'):
             print("quit")
             self.has_files = False
+
+    def on_label_change(self, event):
+        print("Label selecionada:", self.current_label.get())
+
+    def draw_label_buttons(self, img):
+        for i, label in enumerate(self.labels):
+            cv2.rectangle(img, (10, 10 + i*40), (200, 40 + i*40), (50,50,50), -1)
+            color = (0,255,0) if label == self.current_label else (255,255,255)
+            cv2.putText(img, label, (20, 35 + i*40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
 
     def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig]):
@@ -253,10 +305,16 @@ class Vision:
         self.folder_list = os.listdir(img_path)
         print(f"{len(self.folder_list)} files to annotate")
 
+        
         self.has_files = len(self.folder_list) > 0
         self.file_index = 0
-        cv2.namedWindow("image to annotate")
-        cv2.setMouseCallback("image to annotate", self._mouse_click_annotate_callback)
+
+        
+
+        self.current_label = self.labels[0]
+        window_name = "Annotation"
+        cv2.namedWindow(window_name)
+        cv2.setMouseCallback(window_name, self._mouse_click_annotate_callback)
         
         # classified
         # for file in os.listdir(img_path):
@@ -329,9 +387,11 @@ class Vision:
     
     def _set_trained_models(self, weight_paths):
 
+        print(f"weights_path: {weight_paths}")
         models_trained = []
 
         for p in weight_paths:
+            print(p)
             model_trained = YOLO(p)
             model_trained.verbose = False
             models_trained.append(model_trained)
@@ -517,6 +577,7 @@ class Vision:
         return detected
 
     def bounding_box_to_image_box(self, img, bounding_boxes: List[BoundingBoxDetected], color = (255, 0, 255)):
+        print(bounding_boxes)
         for bb in bounding_boxes:
             x1, y1, x2, y2 = bb.box
             
