@@ -71,6 +71,14 @@ python3 data_processing.py
 Processed logs are saved in the ```logs_processed``` folder
 <br>
 
+### 2. Annotation:
+run annotation call:<br>
+```
+python3 main.py annotate -p [path_to_images]
+```
+
+<br>
+
 ## Performance Logs
 Logs include time, ram usage, gpu usage, cpu usage, cycle time, active AIs and captre objects data.
 

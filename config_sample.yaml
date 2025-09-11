@@ -26,3 +26,8 @@ sample_object_segmentation:
   detect: false
   segmentation: true
 
+annotation:
+  weights: "/path_to_weights/best.pt"
+  labels_to_annotate: ['class1', 'class2', 'class3', 'class4']
+  annotate_confidence: 0.5
+  annotate: true

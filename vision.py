@@ -9,7 +9,7 @@ from typing import List, Tuple
 import logging
 import numpy as np
 import os
-
+import re
 @dataclass
 class DetectConfig:
 
@@ -107,6 +107,7 @@ class Vision:
         logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
         self.create_rectangle = False
         self.drawing_rectangle = False
+        self.show_ui = True
         pass
 
     def train(self, train_cfg_list: List[TrainModelConfig]): 
@@ -117,13 +118,30 @@ class Vision:
         
         model_trained = YOLO(weight_path)
         result = model_trained.predict(test_path, show=show)[0]
+    def resize_and_show(self, img):
+        screen_res = 1080, 720
+        scale_width = screen_res[0] / img.shape[1]
+        scale_height = screen_res[1] / img.shape[0]
+        scale = min(scale_width, scale_height, 1.0) 
+        self.resize_scale = scale
+
+        if scale < 1.0:
+            display_img = cv2.resize(img, None,
+                                    fx=scale, fy=scale,
+                                    interpolation=cv2.INTER_AREA)
+        else:
+            display_img = img
+        cv2.imshow('Annotation', display_img)
 
     def _mouse_click_annotate_callback(self, event, x, y, flags, param):
+        x = int(x/self.resize_scale)
+        y = int(y/self.resize_scale)
         if event == cv2.EVENT_MOUSEMOVE:
             if self.drawing_rectangle:
                 img_copy = self.current_annotation.img.copy()
                 cv2.rectangle(img_copy, self.rectangle_start_point, (x, y), (0, 255, 0), 2)
-                cv2.imshow("Annotation", img_copy)
+                self.resize_and_show(img_copy)
+
         elif event == cv2.EVENT_LBUTTONUP:
             if self.drawing_rectangle:
                 self.drawing_rectangle = False
@@ -139,17 +157,15 @@ class Vision:
                 )
                 self.annotation[self.file_index].classes_boxes.append([bb])
 
-                # redesenha definitivo
                 self.render_annotation()
-                print(f"Added manual bounding box: {bb}")
 
 
         if event == cv2.EVENT_LBUTTONDOWN:
-            for i, label in enumerate(self.labels):
-                if 10 <= x <= 200 and 10 + i*40 <= y <= 40 + i*40:
-                    self.current_label = label
-                    print("Label selecionada:", self.current_label)
-                    self.render_annotation()
+            if self.show_ui:
+                for i, label in enumerate(self.labels):
+                    if 10 <= x <= 200 and 10 + i*40 <= y <= 40 + i*40:
+                        self.current_label = label
+                        self.render_annotation()
             if self.create_rectangle:
                 self.rectangle_start_point = (x, y)
                 self.drawing_rectangle = True
@@ -182,8 +198,21 @@ class Vision:
         self.bounding_box_to_image_box(self.current_annotation.img, self.current_annotation.excluded_classes_boxes, self.excluded_color)
         self.mark_validation_img(self.current_annotation.img, self.current_annotation.valid)
 
-        self.draw_label_buttons(self.current_annotation.img)
-        cv2.imshow('Annotation', self.current_annotation.img)
+        if self.show_ui:
+            self.draw_label_buttons(self.current_annotation.img)
+
+            # put name of image
+            image_name = self.current_annotation.id
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            font_scale = 1
+            color = (255, 255, 255)  
+            thickness = 2
+            (text_width, text_height), baseline = cv2.getTextSize(image_name, font, font_scale, thickness)
+            x = self.current_annotation.img.shape[1] - text_width - 10  # 10px de margem
+            y = self.current_annotation.img.shape[0] - 10  # 10px acima da borda inferior
+            cv2.putText(self.current_annotation.img, image_name, (x, y), font, font_scale, color, thickness)
+
+        self.resize_and_show(self.current_annotation.img)
 
     def save_annotations(self):
         
@@ -216,8 +245,11 @@ class Vision:
                                 x2 = x2/w
                                 y1 = y1/h
                                 y2 = y2/h
+                                x_center = x1 + w/2
+                                y_center = y1 + h/2
                                 label_num = self.labels.index(box.label)
-                                txt_line = f"{label_num} {x1:.6f} {y1:.6f} {x2:.6f} {y2:.6f}\n"
+                                # txt_line = f"{label_num} {x1:.6f} {y1:.6f} {x2:.6f} {y2:.6f}\n"
+                                txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {w:.6f} {h:.6f}\n"
                                 f.write(txt_line)
                                 print(txt_line)
 
@@ -228,17 +260,25 @@ class Vision:
 
     def handle_key(self):
 
-        key = cv2.waitKey(0)
+        key = cv2.waitKey(10) & 0xFF  
+        
         # right
         if key == 83 or key == ord('g') or key == ord('G'):
             self.file_index = self.file_index + 1
 
         # left
-        elif key == 81 or key == ord('g') or key == ord('G'):
+        elif key == 81 or key == ord('d') or key == ord('D'):
             self.file_index = self.file_index - 1
 
             if self.file_index < 0:
                 self.file_index = 0
+
+        elif key == ord('t') or key == ord('T'):
+            self.annotation[self.file_index].classes_boxes = [[]]
+            self.annotation[self.file_index].excluded_classes_boxes = []
+        
+        elif key == ord('e') or key == ord('E'):
+            self.show_ui = not self.show_ui
                 # self.file_index = len(self.folder_list)-1 future maybe
         
         elif key == ord('s') or key == ord('S'):
@@ -270,6 +310,12 @@ class Vision:
             color = (0,255,0) if label == self.current_label else (255,255,255)
             cv2.putText(img, label, (20, 35 + i*40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
+    def natural_sort(self, l):
+        # convert = lambda text: int(text) if text.isdigit() else text.lower()
+        # alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
+        # return sorted(l, key=alphanum_key)
+        return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', l)]
+
 
     def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig]):
 
@@ -293,6 +339,7 @@ class Vision:
 
             print(annotate_cfg.labels_to_annotate)
 
+        print("----------------------------------------")
         # labels to index
         for label_list in labels_to_annotate:
             for label in label_list:
@@ -301,9 +348,15 @@ class Vision:
 
         models_trained = self._set_trained_models(weight_paths)
 
+        image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
+        folder_list = [
+        f for f in os.listdir(img_path)
+        if os.path.splitext(f)[1].lower() in image_extensions
+    ]
 
-        self.folder_list = os.listdir(img_path)
+        self.folder_list = sorted(folder_list, key=self.natural_sort)
         print(f"{len(self.folder_list)} files to annotate")
+
 
         
         self.has_files = len(self.folder_list) > 0
@@ -363,6 +416,12 @@ class Vision:
                 self.render_annotation()
 
                 self.handle_key()
+            if cv2.getWindowProperty(window_name, cv2.WND_PROP_VISIBLE) < 1:
+                print("killing...")
+                break
+        cv2.destroyAllWindows()
+        exit(0)
+
             
 
 
@@ -395,6 +454,8 @@ class Vision:
             model_trained = YOLO(p)
             model_trained.verbose = False
             models_trained.append(model_trained)
+        print("----------------------------------------")
+        
         
         if not models_trained:
             raise Exception("weights paths are empty")
@@ -577,7 +638,7 @@ class Vision:
         return detected
 
     def bounding_box_to_image_box(self, img, bounding_boxes: List[BoundingBoxDetected], color = (255, 0, 255)):
-        print(bounding_boxes)
+        if bounding_boxes == [[]]: return
         for bb in bounding_boxes:
             x1, y1, x2, y2 = bb.box
             

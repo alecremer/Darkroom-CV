@@ -204,9 +204,9 @@ class GUI:
         self.path = StringVar(value="")
         self.files = StringVar(value="")
         self.error = StringVar(value="")
-        self.use_date = BooleanVar(False)
-        self.use_time = BooleanVar(False)
-        self.use_index = BooleanVar(False)
+        self.use_date = BooleanVar(value=False)
+        self.use_time = BooleanVar(value=False)
+        self.use_index = BooleanVar(value=False)
         self.use_index.set(True)
 
         self.build_window()
