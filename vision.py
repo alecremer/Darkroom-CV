@@ -248,10 +248,7 @@ class Vision:
                     
                             if not excluded_box:
                                 x1, y1, x2, y2 = box.box
-                                print(f"x1, y1: {x1}, {y1}")
-                                print(f"x2, y2: {x2}, {y2}")
-                                print(f"h, w: {h}, {w}")
-
+                                
                                 x1_norm = min(x1, x2)/w
                                 x2_norm = max(x1, x2)/w
                                 y1_norm = min(y1, y2)/h
@@ -280,7 +277,8 @@ class Vision:
         
         # right
         if key == 83 or key == ord('g') or key == ord('G'):
-            self.file_index = self.file_index + 1
+            if self.file_index +1 < len(self.folder_list):
+                self.file_index = self.file_index + 1
 
         # left
         elif key == 81 or key == ord('d') or key == ord('D'):
