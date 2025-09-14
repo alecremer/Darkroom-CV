@@ -150,6 +150,13 @@ class Vision:
 
                 x1, y1 = self.rectangle_start_point
                 x2, y2 = self.end_point
+
+                h, w = self.current_annotation.img.shape[:2]
+                h_original, w_original = self.current_annotation.original_img.shape[:2]
+                x1 = (x1/w)*w_original
+                x2 = (x2/w)*w_original
+                y1 = (y1/h)*h_original
+                y2 = (y2/h)*h_original
                 bb = BoundingBoxDetected(
                     label=self.current_label,
                     box=torch.tensor([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)], dtype=torch.float32),
@@ -241,15 +248,24 @@ class Vision:
                     
                             if not excluded_box:
                                 x1, y1, x2, y2 = box.box
-                                x1 = x1/w
-                                x2 = x2/w
-                                y1 = y1/h
-                                y2 = y2/h
-                                x_center = x1 + w/2
-                                y_center = y1 + h/2
+                                print(f"x1, y1: {x1}, {y1}")
+                                print(f"x2, y2: {x2}, {y2}")
+                                print(f"h, w: {h}, {w}")
+
+                                x1_norm = min(x1, x2)/w
+                                x2_norm = max(x1, x2)/w
+                                y1_norm = min(y1, y2)/h
+                                y2_norm = max(y1, y2)/h
+
+                                box_w_norm = x2_norm - x1_norm
+                                box_h_norm = y2_norm - y1_norm
+
+                                x_center = x1_norm + box_w_norm/2
+                                y_center = y1_norm + box_h_norm/2
+                                
                                 label_num = self.labels.index(box.label)
                                 # txt_line = f"{label_num} {x1:.6f} {y1:.6f} {x2:.6f} {y2:.6f}\n"
-                                txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {w:.6f} {h:.6f}\n"
+                                txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {box_w_norm:.6f} {box_h_norm:.6f}\n"
                                 f.write(txt_line)
                                 print(txt_line)
 
