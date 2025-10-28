@@ -1,5 +1,13 @@
 import os
 import hashlib
+import sys
+
+args = 0
+if len(sys.argv) > 1:
+    arg = sys.argv[1]
+    print(f"Argumento recebido: {arg}")
+else:
+    print("Nenhum argumento passado")
 
 def hash_file(path, block_size=65536):
     hasher = hashlib.sha256()
@@ -33,9 +41,6 @@ def remove_duplicates(folder):
     print(f"\nRemovidos {removed} arquivos duplicados.")
 
 if __name__ == "__main__":
-    # pasta = "./imagens"  # altere para a pasta desejada
-    # pasta = "/home/ale/Downloads/spaghetti"
-    pasta = "/home/ale/Downloads/stringing"
-    # pasta = "/home/ale/Downloads/PI2/3d_print_failure_dataset/train/images (cópia)"
+    pasta = arg
 
     remove_duplicates(pasta)
