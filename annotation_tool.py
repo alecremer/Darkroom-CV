@@ -179,7 +179,8 @@ class AnnotationTool:
         
         img_copy = self.render_poly(self.poly, self.current_annotation.img, (128, 128, 255))
         
-        for poly in self.annotation[self.file_index].classes_masks:
+        for mask in self.annotation[self.file_index].classes_masks:
+            poly = mask.points
             img_copy = self.render_poly(poly, img_copy)
         # img_copy = self.current_annotation.img.copy()
         
@@ -243,11 +244,23 @@ class AnnotationTool:
         elif key == ord('r') or key == ord('R'):
             self.create_rectangle = True
 
+        elif key == ord('w') or key == ord('W'):
+            if len(self.poly) > 1:
+                self.poly.pop()
+            else:
+                self.create_poly = False
+                self.drawing_poly = False
+                self.poly = []
+
         elif key == ord('f') or key == ord('F'):
             if self.create_poly:
                 self.create_poly = False
                 self.drawing_poly = False
-                self.annotation[self.file_index].classes_masks.append(self.poly)
+                mask = PolygonalMask(
+                    label=self.current_label,
+                    points=self.poly
+                )
+                self.annotation[self.file_index].classes_masks.append(mask)
                 self.poly = []
             else:
                 self.create_poly = True
@@ -340,6 +353,7 @@ class AnnotationTool:
                     
                     h, w = annotation.original_img.shape[:2]
 
+                    # save boxes
                     for class_box in annotation.classes_boxes:
                         for box in class_box:
                             excluded_box = False
@@ -363,21 +377,24 @@ class AnnotationTool:
                                 y_center = y1_norm + box_h_norm/2
                                 
                                 label_num = self.labels.index(box.label)
-                                # txt_line = f"{label_num} {x1:.6f} {y1:.6f} {x2:.6f} {y2:.6f}\n"
                                 txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {box_w_norm:.6f} {box_h_norm:.6f}\n"
                                 f.write(txt_line)
                                 print(txt_line)
 
+                    # save masks
+                    for mask in annotation.classes_masks:
+                        label_num = self.labels.index(mask.label)
+                        print(mask.points)
+                        points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
+                        points_str = " ".join(points_str_proto)
+                        print(points_str)
+                        txt_line = f"{label_num} {points_str}"
+                        f.write(txt_line)
+                        print(txt_line)
 
-        # label = self.annotation[0].classes_boxes[0][0].label
-        # print(f"{label} {x1} {y1} {x2} {y2}")
-        # for annotation in self.annotation:
 
     
     def natural_sort(self, l):
-        # convert = lambda text: int(text) if text.isdigit() else text.lower()
-        # alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', key)]
-        # return sorted(l, key=alphanum_key)
         return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', l)]
 
 
@@ -428,7 +445,8 @@ class AnnotationTool:
         print("e: show/hide UI")
         print("s: save")
         print("r: create rectangle")
-        print("f: create polygon")
+        print("f: create/save polygon")
+        print("w: delete last polygon point")
         print("q: quit")
 
 
