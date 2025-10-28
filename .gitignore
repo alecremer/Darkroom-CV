@@ -5,6 +5,7 @@ test_seg
 sam_b.pt
 yolo11n.pt
 yolo11n-seg.pt
+models
 logs
 *.pyc
 */runs*
@@ -12,3 +13,8 @@ venv
 .vscode
 config.yaml
 dataset
+mae/reconstructions
+mae/segmentation_visuals
+mae/mae_checkpoints
+mae/segmentation_checkpoints
+models

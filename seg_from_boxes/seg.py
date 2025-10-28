@@ -50,7 +50,7 @@ def yolo_bbox2segment(im_dir, save_dir=None, sam_model="sam_b.pt"):
         LOGGER.info("Segmentation labels detected, no need to generate new ones!")
         return
     LOGGER.info("Detection labels detected, generating segment labels by SAM model!")
-    sam_model = SAM(sam_model)
+    sam_model = SAM(sam_model).to("cuda:0")
     
     # create save image directory
     save_masked_img_dir = Path(save_dir + "/images_masked") if save_dir else Path(im_dir).parent / "labels-segment-images"
@@ -68,6 +68,7 @@ def yolo_bbox2segment(im_dir, save_dir=None, sam_model="sam_b.pt"):
         boxes[:, [0, 2]] *= w
         boxes[:, [1, 3]] *= h
         im = cv2.imread(l["im_file"])
+        im = cv2.resize(im, (512, 512)) 
         # cv2.imshow(im)
         # sam_results = sam_model(im, bboxes=xywh2xyxy(boxes), verbose=False, save=False, show=True)
         sam_results = sam_model(im, bboxes=xywh2xyxy(boxes), verbose=False, save=False)
@@ -102,5 +103,5 @@ def train():
     results = model.train(data=path, epochs=epochs, imgsz=640)
     model.val()
 
-train()
-# yolo_bbox2segment(raw_path, save_path)
+# train()
+yolo_bbox2segment(raw_path, save_path)

@@ -1,0 +1,4 @@
+raw_path: /path_to_data # path to folder containing raw images folder and labels folder
+save_path: /save_path
+save_path_prefix: # optional
+epochs: 50
