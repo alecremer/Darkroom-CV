@@ -493,44 +493,8 @@ class AnnotationTool:
                 img_boxes = []
                 classes_masks = [[]]
 
-                for i, m in enumerate(models_trained):
-                    # if m and m.strip():
-                    if m.model_type == Model.YOLO.value:
-                        result = m.model(img, conf=annotate_confidence[i])
-                        if m.model.task == "detect":
-                            bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
-                            img_boxes.append(bounding_boxes)
-                        elif m.model.task == "segment":
-                            masks = self.get_masks_from_result(result, img)
-                            classes_masks.append(masks)
-                            # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
-                    elif m.model_type == Model.VITMAE_SEG.value:
-                        predict_mask = m.model.predict_from_image(img)
-                        predict_mask_8bit = (predict_mask * 255).astype(np.uint8)
-                        contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-                        masks = []
-                        for contours_obj in contours_list:
-                            contours_obj = [c[0] for c in contours_obj[0]]
-                            
-                            mask = []
-                            for contours in contours_obj:
-                                if isinstance(contours, np.ndarray) and  len(contours) == 2:
-                                    # print(contours)
-                                    point = Point(contours[0], contours[1])
-                                    mask.append(point)
-                                # mask = [Point(p[0], p[1]) for p in contours_obj]
-                                # masks.append(PolygonalMask("none_label", mask))
-                            #     # print(contours)
-                            #     # contour = contours.squeeze(axis=1)
-                            #     print(contours)
-                            #     contour = contours[0]
-                                
-                            #     mask = [Point(p[0], p[1]) for p in contour]
-                            masks.append(PolygonalMask("none_label", mask))
-                        result = masks
-                        # print(result)
-                        classes_masks.append(result)
-                img = img_original.copy()
+                
+                # img = img_original.copy()
 
                 # load annotations
                 if id in [l.split(".")[0] for l in self.label_list_sorted]:
@@ -573,6 +537,46 @@ class AnnotationTool:
                                     points=poly
                                 )
                                 classes_masks.append([mask])
+
+                # IA assistance
+                else:
+                    for i, m in enumerate(models_trained):
+                        # if m and m.strip():
+                        if m.model_type == Model.YOLO.value:
+                            result = m.model(img, conf=annotate_confidence[i])
+                            if m.model.task == "detect":
+                                bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
+                                img_boxes.append(bounding_boxes)
+                            elif m.model.task == "segment":
+                                masks = self.get_masks_from_result(result, img)
+                                classes_masks.append(masks)
+                                # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
+                        elif m.model_type == Model.VITMAE_SEG.value:
+                            predict_mask = m.model.predict_from_image(img)
+                            predict_mask_8bit = (predict_mask * 255).astype(np.uint8)
+                            contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                            masks = []
+                            for contours_obj in contours_list:
+                                contours_obj = [c[0] for c in contours_obj[0]]
+                                
+                                mask = []
+                                for contours in contours_obj:
+                                    if isinstance(contours, np.ndarray) and  len(contours) == 2:
+                                        # print(contours)
+                                        point = Point(contours[0], contours[1])
+                                        mask.append(point)
+                                    # mask = [Point(p[0], p[1]) for p in contours_obj]
+                                    # masks.append(PolygonalMask("none_label", mask))
+                                #     # print(contours)
+                                #     # contour = contours.squeeze(axis=1)
+                                #     print(contours)
+                                #     contour = contours[0]
+                                    
+                                #     mask = [Point(p[0], p[1]) for p in contour]
+                                masks.append(PolygonalMask("none_label", mask))
+                            result = masks
+                            # print(result)
+                            classes_masks.append(result)
                 
                 self.annotation.append(AnnotationCell(id, img, img_original, img_boxes, classes_masks, [], True))
 
