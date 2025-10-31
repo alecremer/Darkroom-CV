@@ -30,6 +30,7 @@ class DetectModelConfig:
     label: str
     confidence: float
     device: str
+    test_path: str | None
     segmentation: bool = False
 
 
@@ -43,6 +44,7 @@ class TrainModelConfig:
     device: str
     model: str
     results_folder_name: str
+    model_par_config: dict
 
 class Train:
 
@@ -58,8 +60,13 @@ class Train:
 
         model = YOLO("models/" + model)
 
-        results = model.train(data=(path + "/data.yaml"), epochs=epochs, device=device, 
-                              project=path + "/runs", name=results_folder_name, patience=50)
+        if train_cfg.model_par_config:
+
+            results = model.train(data=(path + "/data.yaml"), device=device, 
+                            project=path + "/runs", name=results_folder_name, **train_cfg.model_par_config)
+        else:
+            results = model.train(data=(path + "/data.yaml"), epochs=epochs, device=device, 
+                            project=path + "/runs", name=results_folder_name, patience=50)
         model.val()
 
     @classmethod
@@ -90,10 +97,12 @@ class Vision:
         self._train.train(train_cfg_list)
     
 
-    def test(self, weight_path, test_path, show = True):
-        
+    def test(self, weight_path, test_path, show_image = True):
+        print(weight_path)
+        print(test_path)
+        print(show_image)
         model_trained = YOLO(weight_path)
-        result = model_trained.predict(test_path, show=show)[0] 
+        result = model_trained.predict(test_path, show=show_image)[0] 
 
     def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig]):
         annotation_tool = AnnotationTool()

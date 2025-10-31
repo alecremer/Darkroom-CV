@@ -20,4 +20,10 @@ class VisionRunner:
         train_model_cfg, detect_model_cfg, annotate_cfg = VisionRunnerParser().parse_from_file(file_config_or_path)
         model.annotate(img_path, annotate_cfg)
 
-    # def get_models(file_config_or_path: str = "config.yaml")
+    def test(self, file_config_or_path: str = "config.yaml"):
+        model = Vision()
+        train_model_cfg, detect_model_cfg, annotate_cfg = VisionRunnerParser().parse_from_file(file_config_or_path)
+
+        print(detect_model_cfg)
+        for detect_cfg in detect_model_cfg:
+            model.test(detect_cfg.weights_path, detect_cfg.test_path, show_image=True)

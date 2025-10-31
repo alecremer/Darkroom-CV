@@ -43,7 +43,7 @@ class VisionCLI:
 
             if self.args.run_mode == "test":
                 # model.test(bottle_weight_path, bottle_dataset_path / "test/images")
-                None
+                vision_runner.test(file_config_or_path)
 
             elif self.args.run_mode == "train":
                 vision_runner.train( file_config_or_path)  

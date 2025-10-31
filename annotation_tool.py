@@ -177,12 +177,18 @@ class AnnotationTool:
             y = self.current_annotation.img.shape[0] - 10  # 10px acima da borda inferior
             cv2.putText(self.current_annotation.img, image_name, (x, y), font, font_scale, color, thickness)
         
-        img_copy = self.render_poly(self.poly, self.current_annotation.img, (128, 128, 255))
+        img_copy = self.current_annotation.img
+        if len(self.poly)>0:
+            img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
         
-        for mask in self.annotation[self.file_index].classes_masks:
-            poly = mask.points
-            img_copy = self.render_poly(poly, img_copy)
-        # img_copy = self.current_annotation.img.copy()
+        classes_masks = self.annotation[self.file_index].classes_masks
+        for masks in classes_masks:
+            if len(masks) > 0:
+                for mask in masks:
+                    if mask:
+                        poly = mask.points
+                        img_copy = self.render_poly(poly, img_copy)
+            # img_copy = self.current_annotation.img.copy()
         
         self.draw_guide_lines(img_copy, self.x_y_mouse[0], self.x_y_mouse[1])
         self.resize_and_show(img_copy)
@@ -260,7 +266,7 @@ class AnnotationTool:
                     label=self.current_label,
                     points=self.poly
                 )
-                self.annotation[self.file_index].classes_masks.append(mask)
+                self.annotation[self.file_index].classes_masks.append([mask])
                 self.poly = []
             else:
                 self.create_poly = True
@@ -382,15 +388,14 @@ class AnnotationTool:
                                 print(txt_line)
 
                     # save masks
-                    for mask in annotation.classes_masks:
-                        label_num = self.labels.index(mask.label)
-                        print(mask.points)
-                        points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
-                        points_str = " ".join(points_str_proto)
-                        print(points_str)
-                        txt_line = f"{label_num} {points_str}"
-                        f.write(txt_line)
-                        print(txt_line)
+                    for class_mask in annotation.classes_masks:
+                        for mask in class_mask:
+                            label_num = self.labels.index(mask.label)
+                            points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
+                            points_str = " ".join(points_str_proto)
+                            txt_line = f"{label_num} {points_str}"
+                            f.write(txt_line)
+                            print(txt_line)
 
 
     
@@ -403,6 +408,8 @@ class AnnotationTool:
         # create save dir
         self.labels_path = img_path + "/labels"
         os.makedirs(self.labels_path, exist_ok=True)
+        self.load_annotation = True
+        self.autosave = True
 
         print("Start annotation")
         weight_paths = []
@@ -473,6 +480,15 @@ class AnnotationTool:
 
         # self.images_bounding_boxes: List[Tuple[np.ndarray, List[BoundingBoxDetected], np.ndarray]] = [] # img, list of boxes, original img
         self.annotation: List[AnnotationCell] = []
+
+        if self.load_annotation:
+            label_extensions = {".txt"}
+            labels_list = [
+                f for f in os.listdir(self.labels_path)
+                if os.path.splitext(f)[1].lower() in label_extensions
+            ]
+            self.label_list_sorted = sorted(labels_list, key=self.natural_sort)
+            
         
         while self.has_files:
             
@@ -487,16 +503,63 @@ class AnnotationTool:
                 img = img_original.copy()
 
                 img_boxes = []
+                classes_masks = [[]]
 
                 for i, m in enumerate(models_trained):
                     # if m and m.strip():
                     result = m(img, conf=annotate_confidence[i])
-                    bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
-                    img_boxes.append(bounding_boxes)
+                    if m.task == "detect":
+                        bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
+                        img_boxes.append(bounding_boxes)
+                    elif m.task == "segment":
+                        masks = self.get_masks_from_result(result, img)
+                        classes_masks.append(masks)
                         # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
                 img = img_original.copy()
+
+                # load annotations
+                if id in [l.split(".")[0] for l in self.label_list_sorted]:
+
+                    with open(os.path.join(self.labels_path, id + ".txt"), "r") as f:
+                        lines = f.readlines()
+                        for line in lines:
+                            values = line.split(" ")
+                            cls = int(values[0])
+
+                            h, w = img.shape[:2]
+                            if len(values) == 5: # rectangle
+
+
+                                xc = float(values[1])
+                                yc = float(values[2])
+                                wb = float(values[3])
+                                hb = float(values[4])
+
+                                x1 = xc-wb/2
+                                x2 = xc+wb/2
+                                y1 = yc+hb/2
+                                y2 = yc-hb/2
+                                
+                                x1_scaled = x1*w
+                                x2_scaled = x2*w
+                                y1_scaled = y1*h
+                                y2_scaled = y2*h
+
+                                bb = BoundingBox(
+                                    label=self.labels[cls],
+                                    box = torch.tensor([min(x1_scaled, x2_scaled), min(y1_scaled, y2_scaled), max(x1_scaled, x2_scaled), max(y1_scaled, y2_scaled)], dtype=torch.float32),
+                                    confidence=1.0
+                                )
+                                img_boxes.append([bb])
+                            elif len(values) > 5: # mask
+                                poly = [Point(int(float(x)*w), int(float(y)*h)) for x, y in zip(values[1::2], values[2::2])]
+                                mask = PolygonalMask(
+                                    label=self.labels[cls],
+                                    points=poly
+                                )
+                                classes_masks.append([mask])
                 
-                self.annotation.append(AnnotationCell(id, img, img_original, img_boxes, [], [], True))
+                self.annotation.append(AnnotationCell(id, img, img_original, img_boxes, classes_masks, [], True))
 
             else:
                 self.current_annotation = self.annotation[self.file_index]
@@ -579,6 +642,19 @@ class AnnotationTool:
 
                 cv2.putText(frame, label + " " + str(confidence), org, font, fontScale, color, thickness)
 
+    def get_masks_from_result(self, result, frame_ref):
+        masks = []
+        for r in result:
+            if r.masks is not None and len(r.masks.data) > 0:
+                
+                mask = r.masks.data[0].cpu().numpy()
+                if mask is not None and mask.size > 0:
+                    mask_resized = cv2.resize(mask, (frame_ref.shape[1], frame_ref.shape[0]))
+                    masks.append(mask_resized)
+
+        return masks
+    
+
     def create_masks_in_frames(self, result, frame, label):
         
         for r in result:
@@ -586,23 +662,20 @@ class AnnotationTool:
                 
                 mask = r.masks.data[0].cpu().numpy()
                 if mask is not None and mask.size > 0:
-                    # Redimensionando a máscara para o tamanho do frame original
                     mask_resized = cv2.resize(mask, (frame.shape[1], frame.shape[0]))
 
-                    # Convertendo a máscara para binário (0 ou 255)
                     mask_resized = (mask_resized > 0.5).astype(np.uint8) * 255
                     
                     mask_colored = np.zeros_like(frame, dtype=np.uint8)
-                    mask_colored[:, :, 1] = mask_resized  # Aplicando verde na máscara
-                    alpha = 0.5  # Nível de transparência
+                    mask_colored[:, :, 1] = mask_resized  
+                    alpha = 0.5  
                     frame = cv2.addWeighted(frame, 1, mask_colored, alpha, 0)
 
                     # Encontrar o contorno da máscara
                     contours, _ = cv2.findContours(mask_resized, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
                     for contour in contours:
-                        if cv2.contourArea(contour) > 100:  # Filtro para contornos pequenos
-                            # Obtendo as coordenadas do retângulo delimitador
+                        if cv2.contourArea(contour) > 100:  
                             x, y, w, h = cv2.boundingRect(contour)
                             x1, y1 = x, y
                             x2, y2 = x + w, y + h

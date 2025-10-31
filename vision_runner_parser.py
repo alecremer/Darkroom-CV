@@ -51,12 +51,14 @@ class VisionRunnerParser:
 
         for detect in detect_config_dict:
 
-            detect_cfg.append(DetectModelConfig(detect["weights"], detect["label"], detect["confidence"], detect["device"], detect.get("segmentation", False)))
+            detect_cfg.append(DetectModelConfig( weights_path=detect["weights"], label=detect["label"], confidence=detect["confidence"], 
+                                                device=detect["device"], segmentation=detect.get("segmentation", False),
+                                                test_path=detect.get("test_path", None)))
 
         for train in train_config_dict:
 
             train_cfg.append(TrainModelConfig(train["dataset"], train["epochs"], train["label"], train["device"],
-                                        train["model"], train["result_folder_name"]))
+                                        train["model"], train["result_folder_name"], model_par_config=train.get("model_par_config", None)))
             
         return train_cfg, detect_cfg
 
