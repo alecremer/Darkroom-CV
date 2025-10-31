@@ -6,7 +6,7 @@ import torch
 import os
 import math
 import re
-
+from model_types import Model, TrainedModel
 @dataclass
 class AnnotateModelConfig:
 
@@ -403,7 +403,7 @@ class AnnotationTool:
         return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', l)]
 
 
-    def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig], models_trained):
+    def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig], models_trained: List[TrainedModel]):
 
         # create save dir
         self.labels_path = img_path + "/labels"
@@ -434,7 +434,6 @@ class AnnotationTool:
                 if label not in self.labels:
                     self.labels.append(label)
 
-        # models_trained = self._set_trained_models(weight_paths)
 
         image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
         folder_list = [
@@ -468,17 +467,6 @@ class AnnotationTool:
         cv2.namedWindow(window_name)
         cv2.setMouseCallback(window_name, self._mouse_click_annotate_callback)
         
-        # classified
-        # for file in os.listdir(img_path):
-        #     index = 0
-        #     img = cv2.imread(os.path.join(img_path, file))
-
-        #     for m in models_trained:
-        #         result = m(img, conf=annotate_confidence[index])
-        #         boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
-        #         self.image_box.append([img, boxes])
-
-        # self.images_bounding_boxes: List[Tuple[np.ndarray, List[BoundingBoxDetected], np.ndarray]] = [] # img, list of boxes, original img
         self.annotation: List[AnnotationCell] = []
 
         if self.load_annotation:
@@ -507,14 +495,31 @@ class AnnotationTool:
 
                 for i, m in enumerate(models_trained):
                     # if m and m.strip():
-                    result = m(img, conf=annotate_confidence[i])
-                    if m.task == "detect":
-                        bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
-                        img_boxes.append(bounding_boxes)
-                    elif m.task == "segment":
-                        masks = self.get_masks_from_result(result, img)
-                        classes_masks.append(masks)
-                        # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
+                    if m.model_type == Model.YOLO.value:
+                        result = m.model(img, conf=annotate_confidence[i])
+                        if m.model.task == "detect":
+                            bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
+                            img_boxes.append(bounding_boxes)
+                        elif m.model.task == "segment":
+                            masks = self.get_masks_from_result(result, img)
+                            classes_masks.append(masks)
+                            # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
+                    elif m.model_type == Model.VITMAE_SEG.value:
+                        predict_mask = m.model.predict_from_image(img)
+                        predict_mask_8bit = (predict_mask * 255).astype(np.uint8)
+                        contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                        masks = []
+                        for contours_obj in contours_list:
+                            contours_obj = contours_obj[0:-1]
+                            for contours in contours_obj:
+                                print(contours)
+                                contour = contours.squeeze(axis=1)
+                                
+                                mask = [Point(p[0], p[1]) for p in contour]
+                                masks.append(PolygonalMask("none_label", mask))
+                        result = masks
+                        # print(result)
+                        classes_masks.append(result)
                 img = img_original.copy()
 
                 # load annotations

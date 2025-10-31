@@ -6,8 +6,9 @@ import math
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple
-
+from mae.mae_seg import MAE_Seg
 from annotation_tool import AnnotationTool, AnnotateModelConfig
+from model_types import Model, TrainedModel
 @dataclass
 class DetectConfig:
 
@@ -32,6 +33,7 @@ class DetectModelConfig:
     device: str
     test_path: str | None
     segmentation: bool = False
+    model: Model = Model.YOLO
 
 
 
@@ -98,9 +100,6 @@ class Vision:
     
 
     def test(self, weight_path, test_path, show_image = True):
-        print(weight_path)
-        print(test_path)
-        print(show_image)
         model_trained = YOLO(weight_path)
         result = model_trained.predict(test_path, show=show_image)[0] 
 
@@ -128,20 +127,46 @@ class Vision:
 
         return cam
     
-    def _set_trained_models(self, weight_paths):
+    def _load_vitmae_seg(self, encoder_path, head_path):
+
+        model = MAE_Seg()
+        model.load_vitmae_seg(encoder_path, head_path)
+        return model
+
+    def _set_trained_models(self, weight_paths) -> List[TrainedModel]:
 
         print(f"weights_path: {weight_paths}")
         models_trained = []
 
-        
-        
-        for p in weight_paths:
             
-            if p:
-                print(p)
-                model_trained = YOLO(p)
-                model_trained.verbose = False
-                models_trained.append(model_trained)
+        for config_weights_paths in weight_paths:
+            for p in config_weights_paths:
+                path = p["path"]
+                model_type = p["type"]
+
+                if path:
+                    print(path)
+                    if model_type == Model.YOLO.value:
+                        
+                        model_trained = TrainedModel()
+                        model_trained.model = YOLO(path)
+                        model_trained.model.verbose = False
+                        model_trained.model_type = model_type
+                        
+                        models_trained.append(model_trained)
+
+                    elif model_type == Model.VITMAE_SEG.value:
+                        encoder_path = path["backbone"]
+                        head_path = path["head"]
+                        model_trained = TrainedModel()
+                        model_trained.model = self._load_vitmae_seg(encoder_path, head_path)
+                        model_trained.model_type = model_type
+
+                        models_trained.append(model_trained)
+
+                    else:
+                        raise("Unsupported model", model_type)
+
         print("----------------------------------------")
         
         
@@ -151,7 +176,7 @@ class Vision:
         return models_trained
 
 
-    def _live_detection_loop(self, cam, confidence, labels, segmentation, models_trained, config: DetectConfig):
+    def _live_detection_loop(self, cam, confidence, labels, segmentation, models_trained: List[TrainedModel], config: DetectConfig):
 
         result = None
         
@@ -190,8 +215,8 @@ class Vision:
                 
                 for m in models_trained:
                     # result = m(frame, stream=True, conf=0.65)
-                    result = m(frame, stream=True, conf=confidence[index])
-                    
+                    result = m.model(frame, stream=True, conf=confidence[index])                    
+
                     if config.capture_objects:
                         objects = []
                         for r in result:
