@@ -510,13 +510,23 @@ class AnnotationTool:
                         contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
                         masks = []
                         for contours_obj in contours_list:
-                            contours_obj = contours_obj[0:-1]
+                            contours_obj = [c[0] for c in contours_obj[0]]
+                            
+                            mask = []
                             for contours in contours_obj:
-                                print(contours)
-                                contour = contours.squeeze(axis=1)
+                                if isinstance(contours, np.ndarray) and  len(contours) == 2:
+                                    # print(contours)
+                                    point = Point(contours[0], contours[1])
+                                    mask.append(point)
+                                # mask = [Point(p[0], p[1]) for p in contours_obj]
+                                # masks.append(PolygonalMask("none_label", mask))
+                            #     # print(contours)
+                            #     # contour = contours.squeeze(axis=1)
+                            #     print(contours)
+                            #     contour = contours[0]
                                 
-                                mask = [Point(p[0], p[1]) for p in contour]
-                                masks.append(PolygonalMask("none_label", mask))
+                            #     mask = [Point(p[0], p[1]) for p in contour]
+                            masks.append(PolygonalMask("none_label", mask))
                         result = masks
                         # print(result)
                         classes_masks.append(result)
