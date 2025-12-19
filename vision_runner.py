@@ -1,5 +1,6 @@
 from vision import Vision, DetectModelConfig, TrainModelConfig, DetectConfig
 from vision_runner_parser import VisionRunnerParser
+from demo_tools import download_demo_data
 
 class VisionRunner:
 
@@ -15,9 +16,16 @@ class VisionRunner:
         train_model_cfg, detect_model_cfg, annotate_cfg = VisionRunnerParser().parse_from_file(file_config_or_path)
         model.train(train_model_cfg)
 
-    def annotate(self, img_path: str, file_config_or_path: str = "config.yaml"):
+    def annotate(self, img_path: str, file_config_or_path: str = "config.yaml", demo: bool = False):
         model = Vision()
+
+        if demo: 
+            download_demo_data()
+            img_path = "./demo/PennFudanPed/PNGImages"
+            file_config_or_path = "./demo/config.yaml"
+
         train_model_cfg, detect_model_cfg, annotate_cfg = VisionRunnerParser().parse_from_file(file_config_or_path)
+        
         model.annotate(img_path, annotate_cfg)
 
     def test(self, file_config_or_path: str = "config.yaml"):

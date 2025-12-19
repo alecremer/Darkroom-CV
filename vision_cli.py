@@ -20,11 +20,10 @@ class VisionCLI:
         return metrics
     
     def run_with_timeout(self, func, timeout):
-        """Run a function with a timeout."""
 
         process = multiprocessing.Process(target=func)
         process.start()
-        process.join(timeout)  # Allow the function to run for 'timeout' seconds
+        process.join(timeout)  
 
         if process.is_alive():
             print("Timeout reached. Terminating function...")
@@ -51,8 +50,9 @@ class VisionCLI:
             
             elif self.args.run_mode == "annotate":
                 img_path = self.args.path
+                demo = self.args.demo
 
-                vision_runner.annotate(img_path, file_config_or_path)
+                vision_runner.annotate(img_path, file_config_or_path, demo)
             
             elif self.args.run_mode == "live":
 

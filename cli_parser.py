@@ -5,7 +5,7 @@ class cli_parser:
     def parse():
         parser = ArgumentParser(
             prog="VisionAI",
-            description="VisionAI is a framework for real-time object detection and classification using YOLOv8, including train, live and test modes."
+            description="VisionAI is a environment for annotation, train, and inference for vision AIs."
         )
 
 
@@ -30,6 +30,7 @@ class cli_parser:
 
         annotate_parser = subparsers.add_parser("annotate", help="annotate mode")
         annotate_parser.add_argument("-p", "--path", type=str, help="folder to images to annotate")
+        annotate_parser.add_argument("-demo", "--demo", action="store_true", help="annotation demo")
 
         args = parser.parse_args()
 
