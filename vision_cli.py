@@ -45,6 +45,7 @@ class VisionCLI:
                 vision_runner.test(file_config_or_path)
 
             elif self.args.run_mode == "train":
+                file_config_or_path = self.args.config_file_path
                 vision_runner.train( file_config_or_path)  
 
             

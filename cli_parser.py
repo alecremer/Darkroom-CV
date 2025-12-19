@@ -24,6 +24,8 @@ class cli_parser:
 
         # Train mode
         train_parser = subparsers.add_parser("train", help="train mode")
+        train_parser.add_argument("-p", "--config_file_path", type=str, help="config file path")
+
 
         # Test mode
         test_parser = subparsers.add_parser("test", help="test mode")
