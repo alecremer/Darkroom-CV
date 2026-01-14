@@ -1,0 +1,39 @@
+from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig
+from config_resolver import ConfigResolver
+from demo_tools import download_demo_data
+from pathlib import Path
+
+class Runner:
+
+    def live(self, detect_cfg: DetectConfig, file_config_or_path: str = "config.yaml"):
+
+        engine = Engine()
+        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
+        engine.live_detection(detect_model_cfg, detect_cfg)    
+
+    def train(self, file_config_or_path: str = "config.yaml"):
+
+        engine = Engine()
+        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
+        engine.train(train_model_cfg)
+
+    def annotate(self, img_path: str, file_config_or_path: str = "config.yaml", demo: bool = False):
+        engine = Engine()
+
+        if demo: 
+            download_demo_data()
+            base_path = Path("demo")
+            img_path = str(base_path /  "PennFudanPed" / "PNGImages")
+            file_config_or_path = str(base_path / "config.yaml")
+
+        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
+        
+        engine.annotate(img_path, annotate_cfg)
+
+    def test(self, file_config_or_path: str = "config.yaml"):
+        engine = Engine()
+        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
+
+        print(detect_model_cfg)
+        for detect_cfg in detect_model_cfg:
+            engine.test(detect_cfg.weights_path, detect_cfg.test_path, show_image=True)

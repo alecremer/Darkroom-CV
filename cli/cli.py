@@ -1,13 +1,13 @@
 import multiprocessing
 from typing import List
-from vision import Vision, DetectModelConfig, TrainModelConfig, DetectConfig, AnnotateModelConfig
-from vision_runner import VisionRunner
-from cli_parser import cli_parser
+from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig, AnnotateModelConfig
+from runner import Runner
+from cli.cli_parser import cli_parser
 from metrics import Metrics
-from vision_runner_parser import VisionRunnerParser
+from config_resolver import ConfigResolver
 
 
-class VisionCLI:
+class CLI:
 
     def __init__(self):
         
@@ -35,25 +35,25 @@ class VisionCLI:
     def run(self, file_config_or_path: str = "config.yaml"):
 
 
-        vision_runner = VisionRunner()
+        runner = Runner()
         run_mode = self.args.run_mode
 
         if len(run_mode) > 0:
 
             if self.args.run_mode == "test":
                 # model.test(bottle_weight_path, bottle_dataset_path / "test/images")
-                vision_runner.test(file_config_or_path)
+                runner.test(file_config_or_path)
 
             elif self.args.run_mode == "train":
                 file_config_or_path = self.args.config_file_path
-                vision_runner.train( file_config_or_path)  
+                runner.train( file_config_or_path)  
 
             
             elif self.args.run_mode == "annotate":
                 img_path = self.args.path
                 demo = self.args.demo
 
-                vision_runner.annotate(img_path, file_config_or_path, demo)
+                runner.annotate(img_path, file_config_or_path, demo)
             
             elif self.args.run_mode == "live":
 
@@ -83,9 +83,9 @@ class VisionCLI:
 
                     metrics = Metrics()
                     metrics = self.set_metrics_active_ais(detect_cfg, metrics)
-                    vision_runner.metrics = metrics
+                    runner.metrics = metrics
                     detect_cfg.loop_start_callback = lambda: metrics.log_performance()
-                    vision_runner.live(detect_cfg, file_config_or_path)    
+                    runner.live(detect_cfg, file_config_or_path)    
 
 
                 elif test:
@@ -102,7 +102,7 @@ class VisionCLI:
 
                     test_cfg = DetectConfig(show_video, capture_objects, performance_log, source, file_name, skip_frames, record, record_name)
                     test_cfg.loop_start_callback = lambda: metrics.log_performance()
-                    detect_cfg_list = VisionRunnerParser().parse_from_file(file_config_or_path)[1]
+                    detect_cfg_list = ConfigResolver().parse_from_file(file_config_or_path)[1]
                     detect_cfg_test = []
 
                     for idx in range(len(detect_cfg_list)):
@@ -122,7 +122,7 @@ class VisionCLI:
                         print("test for classes:")
                         print(f"cap: {capture_objects}")
                         print(metrics.active_ias)
-                        self.run_with_timeout(lambda test_cfg=test_cfg: vision_runner.live(test_cfg),timeout=t)
+                        self.run_with_timeout(lambda test_cfg=test_cfg: runner.live(test_cfg),timeout=t)
                         print("finished")
                         
                         metrics.reinitialize()
@@ -133,11 +133,11 @@ class VisionCLI:
                         # metrics.capture_objects = capture_objects
                         print(f"for cap: {capture_objects}")
                         print(metrics.active_ias)
-                        self.run_with_timeout(lambda test_cfg=test_cfg: vision_runner.live(test_cfg),timeout=t)
+                        self.run_with_timeout(lambda test_cfg=test_cfg: runner.live(test_cfg),timeout=t)
                         # self.run_with_timeout(lambda cfg=cfg: model.live_detection(cfg, capture_objects=capture_objects, file=str(file_name), show_video=show_video, loop_end_callback=lambda: metrics.log_performance(), source=source, ip="10.42.0.47:8080/h264_pcm.sdp", skip_frames=skip_frames), 
                                         # timeout=t)
                         print("finished")
             
                 else:
-                    vision_runner.live(detect_cfg, file_config_or_path)    
+                    runner.live(detect_cfg, file_config_or_path)    
 

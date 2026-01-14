@@ -83,7 +83,7 @@ class Train:
         else:
             raise("train configuration could not be empty")
 
-class Vision:
+class Engine:
 
     
     _train = Train()
