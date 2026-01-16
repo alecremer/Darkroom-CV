@@ -139,7 +139,7 @@ class Engine:
         models_trained = []
 
             
-        for config_weights_paths in weight_paths:
+        for config_weights_paths in filter(None, weight_paths):
             for p in config_weights_paths:
                 path = p["path"]
                 model_type = p["type"]

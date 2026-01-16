@@ -8,7 +8,7 @@ class ConfigResolver:
     def parse_from_file(self, file_name_or_path="config.yaml"):
 
         configs = self._get_configs_from_file(file_name_or_path)
-        (train_config_dict, detect_config_dict, annotate_dict) = self._parse_configs(configs)
+        (train_config_dict, detect_config_dict, annotate_dict) = self._parse_configs_to_dict(configs)
         train_cfg, detect_cfg = self._config_to_list_of_instances(detect_config_dict, train_config_dict)
         annotate_cfg = self._config_to_list_of_annotate(annotate_dict)
         
@@ -25,7 +25,7 @@ class ConfigResolver:
             
         return all_configs
     
-    def _parse_configs(self, configs: List[any]) -> Tuple[dict, dict, dict]:
+    def _parse_configs_to_dict(self, configs: List[any]) -> Tuple[dict, dict, dict]:
         '''Return tuple of train_config_dict and detect_config_dict'''
         train_config_dict = []
         detect_config_dict = []
@@ -66,6 +66,7 @@ class ConfigResolver:
         annotate_cfg = []
 
         for annotate in annotate_config_dict:
-            annotate_cfg.append(AnnotateModelConfig(annotate["weights"], annotate["labels_to_annotate"], annotate["annotate_confidence"]))
+            annotate: dict
+            annotate_cfg.append(AnnotateModelConfig(annotate.get("weights"), annotate["labels_to_annotate"], annotate.get("annotate_confidence", 0.5)))
 
         return annotate_cfg
