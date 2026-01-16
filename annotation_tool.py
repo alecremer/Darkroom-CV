@@ -7,6 +7,7 @@ import os
 import math
 import re
 from model_types import Model, TrainedModel
+from matplotlib.path import Path
 @dataclass
 class AnnotateModelConfig:
 
@@ -40,6 +41,7 @@ class AnnotationCell:
     classes_boxes: List[BoundingBox]
     classes_masks: List[PolygonalMask]
     excluded_classes_boxes: List[BoundingBox]
+    excluded_classes_masks: List[PolygonalMask]
     valid: bool
 
 class AnnotationTool:
@@ -130,6 +132,7 @@ class AnnotationTool:
                 self.drawing_poly = True
 
             else:
+                # exclude clicked box from annotations
                 for classes_boxes in self.annotation[self.file_index].classes_boxes:
                     for i, bounding_boxes in enumerate(classes_boxes): 
                         x1, y1, x2, y2 = bounding_boxes.box
@@ -149,6 +152,40 @@ class AnnotationTool:
                             self.render_annotation()
                                 # cv2.rectangle(self.annotation[self.file_index].img, (int(x1), int(y1)), (int(x2), int(y2)), self.excluded_color, 3)
                                 # cv2.imshow('Annotation', self.annotation[self.file_index].img)
+                
+                #exclude polygon from masks
+                for classes_masks in self.annotation[self.file_index].classes_masks:
+                    for i, masks in enumerate(classes_masks):
+                        masks: PolygonalMask
+                        points = [(p.x, p.y) for p in masks.points]
+
+                        if len(points) < 3:
+                            continue
+
+                        mask_path = Path(points)
+                        click_point = (x, y)
+
+                        if mask_path.contains_point(click_point):
+                            
+                            clicked_array = np.array(points, dtype=np.float32)
+                            
+                            excluded_mask = False
+                            # if already excluded, remove from blacklist
+                            for excluded_mask in self.annotation[self.file_index].excluded_classes_masks:
+                                excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
+                                excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
+
+                                if clicked_array.shape == excluded_mask_array.shape:
+                                    excluded_mask = True
+                                
+                                if excluded_mask:
+                                    break
+
+                            if excluded_mask:
+                                self.annotation[self.file_index].excluded_classes_masks.remove(masks)
+                            else:
+                                self.annotation[self.file_index].excluded_classes_masks.append(masks)
+                            self.render_annotation()
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]
@@ -178,6 +215,8 @@ class AnnotationTool:
             cv2.putText(self.current_annotation.img, image_name, (x, y), font, font_scale, color, thickness)
         
         img_copy = self.current_annotation.img
+
+        # render annotation active polygon
         if len(self.poly)>0:
             img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
         
@@ -188,6 +227,12 @@ class AnnotationTool:
                     if mask:
                         poly = mask.points
                         img_copy = self.render_poly(poly, img_copy)
+        
+        excluded_masks = self.annotation[self.file_index].excluded_classes_masks
+        for mask in excluded_masks:
+            if mask:
+                poly = mask.points
+                img_copy = self.render_poly(poly, img_copy, self.excluded_color)
             # img_copy = self.current_annotation.img.copy()
         
         self.draw_guide_lines(img_copy, self.x_y_mouse[0], self.x_y_mouse[1])
@@ -229,6 +274,7 @@ class AnnotationTool:
             self.poly = []
             self.create_poly = False
             self.annotation[self.file_index].excluded_classes_boxes = []
+            self.annotation[self.file_index].excluded_classes_masks = []
         
         elif key == ord('e') or key == ord('E'):
             self.show_ui = not self.show_ui
@@ -390,10 +436,20 @@ class AnnotationTool:
                     # save masks
                     for class_mask in annotation.classes_masks:
                         for mask in class_mask:
+                            for excluded_mask in self.annotation[self.file_index].excluded_classes_masks:
+                                excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
+                                excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
+
+                                mask_points_list = [(p.x, p.y) for p in mask.points]
+                                mask_array = np.array(mask_points_list, dtype=np.float32)
+
+                                if mask_array.shape == excluded_mask_array.shape:
+                                    break
+
                             label_num = self.labels.index(mask.label)
                             points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
                             points_str = " ".join(points_str_proto)
-                            txt_line = f"{label_num} {points_str}"
+                            txt_line = f"{label_num} {points_str}\n"
                             f.write(txt_line)
                             print(txt_line)
 
@@ -573,12 +629,12 @@ class AnnotationTool:
                                 #     contour = contours[0]
                                     
                                 #     mask = [Point(p[0], p[1]) for p in contour]
-                                masks.append(PolygonalMask("none_label", mask))
+                                masks.append(PolygonalMask(self.current_label, mask))
                             result = masks
                             # print(result)
                             classes_masks.append(result)
                 
-                self.annotation.append(AnnotationCell(id, img, img_original, img_boxes, classes_masks, [], True))
+                self.annotation.append(AnnotationCell(id, img, img_original, img_boxes, classes_masks, [], [], True))
 
             else:
                 self.current_annotation = self.annotation[self.file_index]
