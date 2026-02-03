@@ -5,6 +5,7 @@ from pathlib import Path
 
 class Runner:
 
+
     def live(self, detect_cfg: DetectConfig, file_config_or_path: str = "config.yaml"):
 
         engine = Engine()

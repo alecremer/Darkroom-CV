@@ -1,17 +1,10 @@
 from configs.video_inference_config import VideoInferenceConfig
-from abc import ABC, abstractmethod
-
-class VideoEngine(ABC):
-
-    @abstractmethod
-    def execute(self):
-        pass
-
+from video_processor.video_executor import VideoExecutor
 
 class VideoLoop:
-    def __init__(self, config: VideoInferenceConfig, video_engine: VideoEngine):
+    def __init__(self, config: VideoInferenceConfig, video_executor: VideoExecutor):
         self.config: VideoInferenceConfig = config
-        self.video_engine: VideoEngine = video_engine
+        self.video_executor: VideoExecutor = video_executor
     
     def _handle_callback(self, callback: callable):
         if callback is not None:
@@ -32,5 +25,10 @@ class VideoLoop:
             if self._should_process(frame_count, self.config.skip_frames):
 
                 self._handle_callback(self.config.loop_start_callback)
-                self.video_engine.execute()
+                self.video_executor.execute(frame_count)
                 self._handle_callback(self.config.loop_end_callback)
+
+            if self.video_executor.should_stop():
+                self.video_executor.shutdown()
+                break
+                

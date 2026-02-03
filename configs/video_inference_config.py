@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class DetectConfig:
+class VideoInferenceConfig:
 
     show_video: bool = True
     capture_objects: bool = False
