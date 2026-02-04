@@ -1,5 +1,5 @@
 from configs.video_inference_config import VideoInferenceConfig
-from video_processor.video_executor import VideoExecutor
+from video_app.video_executor import VideoExecutor
 
 class VideoLoop:
     def __init__(self, config: VideoInferenceConfig, video_executor: VideoExecutor):

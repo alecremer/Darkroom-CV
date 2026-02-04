@@ -1,9 +1,12 @@
-from inference_pipeline import InferencePipeline
-from model_tasks import Task
-from rendering.drawer import Drawer
+from typing import List
+from configs.detect_model_config import DetectModelConfig
+from models_loader import ModelsLoader
 from inference_result import InferenceResult
 
-class YOLO_InferencePipeline(InferencePipeline):
+class InferenceRunner():
+    def __init__(self, models_config: List[DetectModelConfig]):
+
+        self.models = ModelsLoader.load_models(models_config)
 
     def inference(self, frame) -> InferenceResult:
         inference_results = []
