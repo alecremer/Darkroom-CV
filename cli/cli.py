@@ -6,6 +6,7 @@ from cli.cli_parser import cli_parser
 from metrics import Metrics
 from config_resolver import ConfigResolver
 from app_services.live_app_service import LiveAppService
+from app_services.train_app_service import TrainAppService
 
 class CLI:
 
@@ -13,22 +14,22 @@ class CLI:
         
         self.args = cli_parser.parse()
     
-    def set_metrics_active_ais(self, detect_config_list: List[DetectModelConfig], metrics: Metrics) -> Metrics:
+    # def set_metrics_active_ais(self, detect_config_list: List[DetectModelConfig], metrics: Metrics) -> Metrics:
 
-        for d in detect_config_list:
-            metrics.active_ias = metrics.active_ias + " - " + d.label
-        return metrics
+    #     for d in detect_config_list:
+    #         metrics.active_ias = metrics.active_ias + " - " + d.label
+    #     return metrics
     
-    def run_with_timeout(self, func, timeout):
+    # def run_with_timeout(self, func, timeout):
 
-        process = multiprocessing.Process(target=func)
-        process.start()
-        process.join(timeout)  
+    #     process = multiprocessing.Process(target=func)
+    #     process.start()
+    #     process.join(timeout)  
 
-        if process.is_alive():
-            print("Timeout reached. Terminating function...")
-            process.terminate()
-            process.join()
+    #     if process.is_alive():
+    #         print("Timeout reached. Terminating function...")
+    #         process.terminate()
+    #         process.join()
 
 
     
@@ -44,9 +45,8 @@ class CLI:
                 runner.test(file_config_or_path)
 
             elif self.args.run_mode == "train":
-                file_config_or_path = self.args.config_file_path
-                runner.train( file_config_or_path)  
-
+                train_service = TrainAppService(self.args)
+                train_service.execute(file_config_or_path)
             
             elif self.args.run_mode == "annotate":
                 img_path = self.args.path
@@ -56,8 +56,8 @@ class CLI:
             
             elif self.args.run_mode == "live":
 
-                live_command: LiveAppService = LiveAppService(self.args)
-                live_command.execute(file_config_or_path)
+                live_service: LiveAppService = LiveAppService(self.args)
+                live_service.execute(file_config_or_path)
                 
                 # else:
                 #     runner.live(detect_cfg, file_config_or_path)    
