@@ -1,17 +1,17 @@
 from video_app.video_executor import VideoExecutor
-from inference_pipeline.inference_pipeline import InferencePipeline
+from inference_runners.inference_runner import InferenceRunner
 from video_app.source.opencv_video_source import OpenCV_VideoSourceTools
 from video_app.source.video_source_config import VideoSourceConfig
 from configs.video_inference_config import VideoInferenceConfig
 import cv2
-from rendering.drawer import Drawer
-from inference_pipeline.inference_result import InferenceResult
+from rendering.renderer import Renderer
+from inference_runners.inference_result import InferenceResult
 
 class OpenCV_VideoExecutor(VideoExecutor):
 
-    def __init__(self, config: VideoInferenceConfig, inference_pipeline: InferencePipeline, video_source_config: VideoSourceConfig, renderer: Drawer):
+    def __init__(self, config: VideoInferenceConfig, inference_pipeline: InferenceRunner, video_source_config: VideoSourceConfig, renderer: Renderer):
         super().__init__(config, renderer)
-        self.inference_pipeline: InferencePipeline = inference_pipeline
+        self.inference_pipeline: InferenceRunner = inference_pipeline
         self.cam = OpenCV_VideoSourceTools._select_video_source_(video_source_config)
         self.video_source_config = video_source_config
         self.frame_stream = []

@@ -1,12 +1,12 @@
 import cv2
 import math
 import numpy as np
-from drawer import Drawer
+from rendering.renderer import Renderer
 from model_tasks import Task
 from typing import List
-from inference_pipeline.inference_result import InferenceResult
+from inference_runners.inference_result import InferenceResult
 
-class OpenCV_Drawer(Drawer):
+class OpenCV_Renderer(Renderer):
     
     def create_masks_in_frame(self, result, frame, label):
         

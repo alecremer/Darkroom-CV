@@ -1,5 +1,5 @@
 from app_services.app_service import AppService
-from live_config_factory import LiveConfigFactory
+from app_services.live_config_factory import LiveConfigFactory
 from project_config_loader import ProjectConfigLoader
 
 class LiveAppService(AppService):

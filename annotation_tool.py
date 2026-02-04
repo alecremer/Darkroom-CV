@@ -8,12 +8,7 @@ import math
 import re
 from model_types import ModelType, Model
 from matplotlib.path import Path
-@dataclass
-class AnnotateModelConfig:
-
-    weights_path: str
-    labels_to_annotate: str
-    annotate_confidence: float
+from configs.annotate_model_config import AnnotateModelConfig
 
 @dataclass
 class BoundingBox:

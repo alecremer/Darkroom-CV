@@ -1,6 +1,6 @@
 import cv2
-from video_source import VideoSource
-from video_source_config import VideoSourceConfig
+from video_app.source.video_source import VideoSource
+from video_app.source.video_source_config import VideoSourceConfig
 
 
 class OpenCV_VideoSourceTools:

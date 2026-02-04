@@ -1,10 +1,5 @@
-import multiprocessing
-from typing import List
-from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig, AnnotateModelConfig
 from runner import Runner
 from cli.cli_parser import cli_parser
-from metrics import Metrics
-from config_resolver import ConfigResolver
 from app_services.live_app_service import LiveAppService
 from app_services.train_app_service import TrainAppService
 

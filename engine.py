@@ -46,7 +46,7 @@ class Train:
                 self.train_one_model(cfg)
 
         else:
-            raise("train configuration could not be empty")
+            raise ValueError("train configuration could not be empty")
 
 class Engine:
 

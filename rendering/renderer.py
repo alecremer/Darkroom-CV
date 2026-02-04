@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from inference_pipeline.inference_result import InferenceResult
+from inference_runners.inference_result import InferenceResult
 from typing import List
 
-class Drawer(ABC):
+class Renderer(ABC):
 
     @abstractmethod
     def create_masks_in_frame(self, result, frame, label):

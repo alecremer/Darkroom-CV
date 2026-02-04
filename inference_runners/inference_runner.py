@@ -1,7 +1,7 @@
 from typing import List
 from configs.detect_model_config import DetectModelConfig
 from models_loader import ModelsLoader
-from inference_result import InferenceResult
+from inference_runners.inference_result import InferenceResult
 
 class InferenceRunner():
     def __init__(self, models_config: List[DetectModelConfig]):

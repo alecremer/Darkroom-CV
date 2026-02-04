@@ -1,5 +1,5 @@
 from abc import ABC
-from video_source import VideoSource
+from video_app.source.video_source import VideoSource
 
 class VideoSourceConfig(ABC):
     source: VideoSource

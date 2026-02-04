@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from configs.video_inference_config import VideoInferenceConfig
-from rendering.drawer import Drawer
+from rendering.renderer import Renderer
 
 class VideoExecutor(ABC):
 
-    def __init__(self, config: VideoInferenceConfig, renderer: Drawer):
+    def __init__(self, config: VideoInferenceConfig, renderer: Renderer):
         self.config = config
         self.renderer = renderer
 

@@ -1,6 +1,8 @@
 import yaml
 from typing import List, Tuple
-from engine import DetectModelConfig, TrainModelConfig, AnnotateModelConfig
+from configs.train_model_config import TrainModelConfig
+from configs.detect_model_config import DetectModelConfig
+from configs.annotate_model_config import AnnotateModelConfig
 
 class ConfigResolver:
 

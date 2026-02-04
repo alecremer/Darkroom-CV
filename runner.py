@@ -1,4 +1,5 @@
-from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig
+from engine import Engine
+from configs.detect_model_config import DetectModelConfig
 from config_resolver import ConfigResolver
 from demo_tools import download_demo_data
 from pathlib import Path
@@ -7,7 +8,7 @@ from project_config import ProjectConfig
 class Runner:
 
 
-    def live(self, detect_cfg: DetectConfig, project_config: ProjectConfig):
+    def live(self, detect_cfg: DetectModelConfig, project_config: ProjectConfig):
 
         engine = Engine()
         engine.live_detection(project_config.detect, detect_cfg)    

@@ -11,6 +11,6 @@ class ModelType(Enum):
 class Model:
     model: Any | None = None
     model_type: str | None = None
-    label: str
-    confidence: float
-    task: Task
+    label: str = None
+    confidence: float = None
+    task: Task = None
