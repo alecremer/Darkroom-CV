@@ -1,6 +1,6 @@
 from app_services.app_service import AppService
 from live_config_factory import LiveConfigFactory
-
+from project_config_loader import ProjectConfigLoader
 
 class LiveAppService(AppService):
     
@@ -8,8 +8,9 @@ class LiveAppService(AppService):
 
     def execute(self, config_path: str = "config.yaml"):
         factory = LiveConfigFactory()
+        project_cfg = ProjectConfigLoader.load(config_path)
         (runner, detect_cfg) = factory._build_runner(self.args)
-        runner.live(detect_cfg, config_path)
+        runner.live(detect_cfg, project_cfg)
 
     # def test_loop(self):
     #     show_video = False
