@@ -8,8 +8,8 @@ from typing import List, Tuple
 from annotation_tool import AnnotationTool, AnnotateModelConfig
 from model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig
-
-
+from configs.video_inference_config import VideoInferenceConfig
+from video_app.video_app import VideoApp
 
 
 
@@ -73,6 +73,10 @@ class Engine:
         weight_path = [config.weights_path for config in annotate_model_config]
         models_trained = self._set_trained_models(weight_path)
         annotation_tool.annotate(img_path, annotate_model_config, models_trained)
+
+    def live(self, video_config: VideoInferenceConfig, config_path: str):
+        video_app = VideoApp(video_config)
+        video_app.run()
 
     
 

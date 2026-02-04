@@ -1,19 +1,22 @@
 from runner import Runner
 from metrics import Metrics
-from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig, AnnotateModelConfig
+from configs.detect_model_config import DetectModelConfig
 from typing import List, Tuple
 from config_resolver import ConfigResolver
 from command import BaseCommand
+from video_app.source.video_source import VideoSource
+from configs.video_inference_config import VideoInferenceConfig
+
 
 class LiveCommand(BaseCommand):
     
-    def _select_source(self, args) -> str: 
+    def _select_source(self, args) -> VideoSource: 
         
-        source = "self"
+        source = VideoSource.SELF
         if args.rtsp:
-            source = "rtsp"
+            source = VideoSource.RTSP
         elif args.file:
-            source = "file"
+            source = VideoSource.FILE
         return source
     
     def set_metrics_active_ais(self, detect_config_list: List[DetectModelConfig], metrics: Metrics) -> Metrics:
@@ -27,7 +30,7 @@ class LiveCommand(BaseCommand):
         metrics = self.set_metrics_active_ais(detect_cfg, metrics)
         return metrics
 
-    def _build_runner(self, args) -> Tuple[Runner, DetectConfig]:
+    def _build_runner(self, args) -> Tuple[Runner, VideoInferenceConfig]:
 
         runner = Runner()
 
@@ -42,14 +45,15 @@ class LiveCommand(BaseCommand):
 
         source = self._select_source(args)
 
-        detect_cfg = DetectConfig(show_video, capture_objects, performance_log, source, file_name, skip_frames, record, record_name)
+        video_config = VideoInferenceConfig(show_video, capture_objects, performance_log, source, file_name, skip_frames, record, record_name)
+
         
         if performance_log:
-            metrics = self._build_performance_log(detect_cfg)
+            metrics = self._build_performance_log(video_config)
             self.runner.metrics = metrics
-            detect_cfg.loop_start_callback = lambda: metrics.log_performance()
+            video_config.loop_start_callback = lambda: metrics.log_performance()
 
-        return (runner, detect_cfg)
+        return (runner, video_config)
 
     def execute(self, config_path: str = "config.yaml"):
         (runner, detect_cfg) = self._build_runner(self.args)
