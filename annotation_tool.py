@@ -6,7 +6,7 @@ import torch
 import os
 import math
 import re
-from model_types import Model, TrainedModel
+from model_types import ModelType, Model
 from matplotlib.path import Path
 @dataclass
 class AnnotateModelConfig:
@@ -459,7 +459,7 @@ class AnnotationTool:
         return [int(text) if text.isdigit() else text.lower() for text in re.split(r'(\d+)', l)]
 
 
-    def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig], models_trained: List[TrainedModel]):
+    def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig], models_trained: List[Model]):
 
         # create save dir
         self.labels_path = img_path + "/labels"
@@ -598,7 +598,7 @@ class AnnotationTool:
                 else:
                     for i, m in enumerate(models_trained):
                         # if m and m.strip():
-                        if m.model_type == Model.YOLO.value:
+                        if m.model_type == ModelType.YOLO.value:
                             result = m.model(img, conf=annotate_confidence[i])
                             if m.model.task == "detect":
                                 bounding_boxes = self.result_to_bounding_box(result, labels_to_annotate[i])
@@ -607,7 +607,7 @@ class AnnotationTool:
                                 masks = self.get_masks_from_result(result, img)
                                 classes_masks.append(masks)
                                 # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
-                        elif m.model_type == Model.VITMAE_SEG.value:
+                        elif m.model_type == ModelType.VITMAE_SEG.value:
                             predict_mask = m.model.predict_from_image(img)
                             predict_mask_8bit = (predict_mask * 255).astype(np.uint8)
                             contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

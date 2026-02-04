@@ -1,9 +1,12 @@
 from mae.mae_seg import MAE_Seg
 from typing import List
-from model_types import Model, TrainedModel
+from model_types import ModelType, Model
 from ultralytics import YOLO
-
+from configs.detect_model_config import DetectModelConfig
+from model_tasks import Task
 class ModelsLoader:
+
+    @classmethod
     def _load_vitmae_seg(self, encoder_path, head_path) -> MAE_Seg:
 
         model = MAE_Seg()
@@ -11,36 +14,41 @@ class ModelsLoader:
 
         return model
 
-    def _set_trained_models(self, weight_paths) -> List[TrainedModel]:
+    @classmethod
+    def load_models(self, model_configs: List[DetectModelConfig]) -> List[Model]:
 
+        weight_paths = [m.weights_path for m in model_configs]
         print(f"weights_path: {weight_paths}")
-        models_trained = []
+        models_loaded = []
 
-            
-        for config_weights_paths in filter(None, weight_paths):
-            for p in config_weights_paths:
+        for config in model_configs:
+        # for config_weights_paths in filter(None, weight_paths):
+            weight_paths = [c for c in config.weights_path]
+            for p in weight_paths:
                 path = p["path"]
                 model_type = p["type"]
 
                 if path:
                     print(path)
-                    if model_type == Model.YOLO.value:
-                        
-                        model_trained = TrainedModel()
-                        model_trained.model = YOLO(path)
-                        model_trained.model.verbose = False
-                        model_trained.model_type = model_type
-                        
-                        models_trained.append(model_trained)
+                    model = Model()
+                    model.model_type = model_type
+                    model.confidence = config.confidence
+                    model.label = config.label
 
-                    elif model_type == Model.VITMAE_SEG.value:
+                    if model_type == ModelType.YOLO.value:
+                        
+                        model.model = YOLO(path)
+                        model.model.verbose = False
+                        models_loaded.append(model)
+                        model.task = model.model.task
+
+                    elif model_type == ModelType.VITMAE_SEG.value:
                         encoder_path = path["backbone"]
                         head_path = path["head"]
-                        model_trained = TrainedModel()
-                        model_trained.model = self._load_vitmae_seg(encoder_path, head_path)
-                        model_trained.model_type = model_type
+                        model.model = self._load_vitmae_seg(encoder_path, head_path)
+                        model.task = Task.SEGMENTATION
 
-                        models_trained.append(model_trained)
+                        models_loaded.append(model)
 
                     else:
                         raise("Unsupported model", model_type)
@@ -48,4 +56,4 @@ class ModelsLoader:
         # if not models_trained:
             # raise Exception("weights paths are empty")
 
-        return models_trained
+        return models_loaded

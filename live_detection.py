@@ -1,5 +1,5 @@
 from typing import List
-from model_types import TrainedModel
+from model_types import Model
 from configs.video_inference_config import VideoInferenceConfig
 from configs.detect_model_config import DetectModelConfig
 from enum import Enum
@@ -31,7 +31,7 @@ class LiveDetection:
 
         return frame
     
-    def _pack_models_for_inference(self, models: List[TrainedModel], labels: List[str], models_for_seg_idxs: List[bool]) -> List[InferenceModel]:
+    def _pack_models_for_inference(self, models: List[Model], labels: List[str], models_for_seg_idxs: List[bool]) -> List[InferenceModel]:
         
         models_for_inference: List[InferenceModel] = []
         
@@ -47,7 +47,7 @@ class LiveDetection:
         return models_for_inference
 
 
-    def _live_detection_loop(self, cam, confidences, labels, models_for_seg_idxs, models: List[TrainedModel], config: VideoInferenceConfig):
+    def _live_detection_loop(self, cam, confidences, labels, models_for_seg_idxs, models: List[Model], config: VideoInferenceConfig):
 
         result = None
         

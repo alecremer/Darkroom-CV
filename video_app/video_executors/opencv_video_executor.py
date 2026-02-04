@@ -1,14 +1,16 @@
-from video_processor.video_executor import VideoExecutor
-from video_processor.video_engines.inference_pipeline import InferencePipeline
-from video_processor.source.opencv_video_source import OpenCV_VideoSourceTools
-from video_processor.source.video_source_config import VideoSourceConfig
+from video_app.video_executor import VideoExecutor
+from inference_pipeline.inference_pipeline import InferencePipeline
+from video_app.source.opencv_video_source import OpenCV_VideoSourceTools
+from video_app.source.video_source_config import VideoSourceConfig
 from configs.video_inference_config import VideoInferenceConfig
 import cv2
+from rendering.drawer import Drawer
+from inference_pipeline.inference_result import InferenceResult
 
 class OpenCV_VideoExecutor(VideoExecutor):
 
-    def __init__(self, config: VideoInferenceConfig, inference_pipeline: InferencePipeline, video_source_config: VideoSourceConfig):
-        super().__init__(config)
+    def __init__(self, config: VideoInferenceConfig, inference_pipeline: InferencePipeline, video_source_config: VideoSourceConfig, renderer: Drawer):
+        super().__init__(config, renderer)
         self.inference_pipeline: InferencePipeline = inference_pipeline
         self.cam = OpenCV_VideoSourceTools._select_video_source_(video_source_config)
         self.video_source_config = video_source_config
@@ -19,7 +21,10 @@ class OpenCV_VideoExecutor(VideoExecutor):
         check, frame = self.cam.read()
         if not check:
             return
-        frame_inference = self.inference_pipeline.inference(frame)
+        
+        result: InferenceResult = self.inference_pipeline.inference(frame)
+        frame_inference = self.renderer.render_results(result)
+
         if self.config.show_video:
             self.frame_stream.append(frame_inference)
             cv2.imshow('video', frame_inference)

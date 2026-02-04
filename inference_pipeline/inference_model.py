@@ -1,8 +1,8 @@
-from model_types import TrainedModel
+from model_types import Model
 from model_tasks import Task
 
 class InferenceModel:
-    model: TrainedModel
+    model: Model
     label: str
     confidence: float
     task: Task

@@ -6,7 +6,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple
 from annotation_tool import AnnotationTool, AnnotateModelConfig
-from model_types import Model, TrainedModel
+from model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig
 
 

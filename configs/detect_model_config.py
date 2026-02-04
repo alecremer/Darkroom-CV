@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from model_types import Model, TrainedModel
+from model_types import ModelType, Model
 
 @dataclass
 class DetectModelConfig:
@@ -10,4 +10,4 @@ class DetectModelConfig:
     device: str
     test_path: str | None
     segmentation: bool = False
-    model: Model = Model.YOLO
+    model: ModelType = ModelType.YOLO
