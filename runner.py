@@ -2,21 +2,20 @@ from engine import Engine, DetectModelConfig, TrainModelConfig, DetectConfig
 from config_resolver import ConfigResolver
 from demo_tools import download_demo_data
 from pathlib import Path
+from project_config import ProjectConfig
 
 class Runner:
 
 
-    def live(self, detect_cfg: DetectConfig, file_config_or_path: str = "config.yaml"):
+    def live(self, detect_cfg: DetectConfig, project_config: ProjectConfig):
 
         engine = Engine()
-        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
-        engine.live_detection(detect_model_cfg, detect_cfg)    
+        engine.live_detection(project_config.detect, detect_cfg)    
 
-    def train(self, file_config_or_path: str = "config.yaml"):
+    def train(self, project_config: ProjectConfig):
 
         engine = Engine()
-        train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
-        engine.train(train_model_cfg)
+        engine.train(project_config.train)
 
     def annotate(self, img_path: str, file_config_or_path: str = "config.yaml", demo: bool = False):
         engine = Engine()
