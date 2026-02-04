@@ -6,26 +6,13 @@ import torch
 import os
 import math
 import re
-from model_types import ModelType, Model
+from types.model_types import ModelType, Model
 from matplotlib.path import Path
 from configs.annotate_model_config import AnnotateModelConfig
+from types.entities import BoundingBox, PolygonalMask, Point
 
-@dataclass
-class BoundingBox:
 
-    label: str
-    box: Tuple[int, int, int, int]
-    confidence: float
 
-@dataclass
-class Point:
-    x: int
-    y: int
-
-@dataclass
-class PolygonalMask:
-    label: str
-    points: List[Point]
 
 @dataclass
 class AnnotationCell:

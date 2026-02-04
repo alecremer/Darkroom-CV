@@ -1,9 +1,9 @@
 from mae.mae_seg import MAE_Seg
 from typing import List
-from model_types import ModelType, Model
+from types.model_types import ModelType, Model
 from ultralytics import YOLO
 from configs.detect_model_config import DetectModelConfig
-from model_tasks import Task
+from types.model_tasks import Task
 class ModelsLoader:
 
     @classmethod

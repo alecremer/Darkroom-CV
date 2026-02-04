@@ -2,7 +2,7 @@ import cv2
 import math
 import numpy as np
 from rendering.renderer import Renderer
-from model_tasks import Task
+from types.model_tasks import Task
 from typing import List
 from inference_runners.inference_result import InferenceResult
 

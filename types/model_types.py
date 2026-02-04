@@ -1,7 +1,7 @@
 from enum import Enum
 from dataclasses import dataclass
 from typing import Any
-from model_tasks import Task
+from types.model_tasks import Task
 
 class ModelType(Enum):
     YOLO: str = "YOLO"
