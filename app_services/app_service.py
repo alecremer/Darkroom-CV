@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class BaseCommand(ABC):
+class AppService(ABC):
 
     def __init__(self, args):
         self.args = args

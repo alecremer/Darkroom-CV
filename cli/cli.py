@@ -5,7 +5,7 @@ from runner import Runner
 from cli.cli_parser import cli_parser
 from metrics import Metrics
 from config_resolver import ConfigResolver
-from commands.live_command import LiveCommand
+from app_services.live_app_service import LiveAppService
 
 class CLI:
 
@@ -56,7 +56,7 @@ class CLI:
             
             elif self.args.run_mode == "live":
 
-                live_command: LiveCommand = LiveCommand(self.args)
+                live_command: LiveAppService = LiveAppService(self.args)
                 live_command.execute(file_config_or_path)
                 
                 # else:
