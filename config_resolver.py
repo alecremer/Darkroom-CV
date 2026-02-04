@@ -2,7 +2,6 @@ import yaml
 from typing import List, Tuple
 from engine import DetectModelConfig, TrainModelConfig, AnnotateModelConfig
 
-
 class ConfigResolver:
 
     def parse_from_file(self, file_name_or_path="config.yaml"):
