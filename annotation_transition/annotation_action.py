@@ -1,0 +1,11 @@
+from enum import Enum
+
+class AnnotationAction(Enum):
+    IDLE = 0,
+    START_CONSTRUCT_RECTANGLE = 5,
+    DRAW_CONSTRUCT_RECTANGLE = 10,
+    ANNOTATE_BBOX = 20,
+    CANCEL_CONSTRUCT_POLY = 30,
+    SELECT_LABEL = 40,
+    START_CONSTRUCT_MASK = 50,
+    EXCLUDE_CLICKED_ENTITY = 60,

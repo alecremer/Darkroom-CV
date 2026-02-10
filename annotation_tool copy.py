@@ -10,37 +10,33 @@ from types.model_types import ModelType, Model
 from matplotlib.path import Path
 from configs.annotate_model_config import AnnotateModelConfig
 from types.entities import BoundingBox, PolygonalMask, Point
+from enum import Enum
 
 
 
 
-@dataclass
-class AnnotationCell:
-
-    id: str
-    img: np.ndarray
-    original_img: np.ndarray
-    classes_boxes: List[BoundingBox]
-    classes_masks: List[PolygonalMask]
-    excluded_classes_boxes: List[BoundingBox]
-    excluded_classes_masks: List[PolygonalMask]
-    valid: bool
+class DrawState(Enum):
+    IDLE = 0,
+    DRAWING_RECTANGLE = 10,
+    DRAWING_MASK = 20,
 
 class AnnotationTool:
 
     def __init__(self):
         # logging.getLogger("ultralytics").setLevel(logging.CRITICAL)
-        self.create_rectangle = False
+        
+
+        self.create_rectangle = False #TODO Maybe change to state
         self.create_poly = False
         self.drawing_poly = False
         self.drawing_rectangle = False
         self.show_ui = True
         self.x_y_mouse = 0,0
         self.poly: List[Point] = []
-        self.excluded_color = (150, 150, 150)
+        self.excluded_color = (150, 150, 150) #TODO move to config file
 
     def resize_and_show(self, img):
-        screen_res = 1080, 720
+        screen_res = 1080, 720 #TODO find a best way 
         scale_width = screen_res[0] / img.shape[1]
         scale_height = screen_res[1] / img.shape[0]
         scale = min(scale_width, scale_height, 1.0) 
@@ -54,120 +50,148 @@ class AnnotationTool:
             display_img = img
         cv2.imshow('Annotation', display_img)
 
-    def _mouse_click_annotate_callback(self, event, x, y, flags, param):
+    def normalize_by_scale(self, x, y, scale) -> tuple[int, int]:
         x = int(x/self.resize_scale)
         y = int(y/self.resize_scale)
-        self.x_y_mouse = x, y
+
+        return x, y
+
+    def draw_rectangle(self, img, x0, y0, x, y, color, thickness):
+        cv2.rectangle(img, self.rectangle_start_point, (x, y), (0, 255, 0), 2)
+        self.resize_and_show(img)
+
+    def mouse_move_callback(self, x, y):
+        if self.drawing_rectangle:
+            img_copy = self.current_annotation.img.copy()
+            x0, y0 = self.rectangle_start_point[0], self.rectangle_start_point[1]
+            color = (0, 255, 0)
+            thickness = 2
+            self.draw_rectangle(img_copy, x0, y0, x, y, color, thickness)
+
+    def lmb_up_callback(self, x, y):
+        if self.drawing_rectangle:
+            self.drawing_rectangle = False
+            self.create_rectangle = False
+            self.end_point = (x, y)
+
+            x1, y1 = self.rectangle_start_point
+            x2, y2 = self.end_point
+
+            h, w = self.current_annotation.img.shape[:2]
+            h_original, w_original = self.current_annotation.original_img.shape[:2]
+            x1 = (x1/w)*w_original
+            x2 = (x2/w)*w_original
+            y1 = (y1/h)*h_original
+            y2 = (y2/h)*h_original
+            bb = BoundingBox(
+                label=self.current_label,
+                box=torch.tensor([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)], dtype=torch.float32),
+                confidence=1.0
+            )
+            self.annotation[self.file_index].classes_boxes.append([bb])
+
+            self.render_annotation()
+
+    def rmb_up_callback(self):
+        self.drawing_poly = False
+        self.create_poly = False
+        self.poly = []
+        self.render_annotation()
+
+    def select_label(self, x, y):
+        for i, label in enumerate(self.labels):
+            if 10 <= x <= 200 and 10 + i*40 <= y <= 40 + i*40:
+                self.current_label = label
+                self.render_annotation()
+    
+    def lmb_down_callback(self, x, y):
+        if self.show_ui:
+            self.select_label(x, y)
+
+        if self.create_rectangle:
+            self.rectangle_start_point = (x, y)
+            self.drawing_rectangle = True
+
+        if self.create_poly:
+            self.poly.append(Point(x, y))
+            self.drawing_poly = True
+
+        else:
+            # exclude clicked box from annotations
+            for classes_boxes in self.annotation[self.file_index].classes_boxes:
+                for i, bounding_boxes in enumerate(classes_boxes): 
+                    x1, y1, x2, y2 = bounding_boxes.box
+                    if x1 <= x <= x2 and y1 <= y <= y2:
+                        
+                        excluded_box = False
+                        for bb in self.annotation[self.file_index].excluded_classes_boxes:
+                            excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
+                            if excluded_box:
+                                break
+                            
+                        # error when users excludes all annotations
+                        if excluded_box:
+                            self.annotation[self.file_index].excluded_classes_boxes.remove(bounding_boxes)
+                        else:
+                            self.annotation[self.file_index].excluded_classes_boxes.append(bounding_boxes)
+                        self.render_annotation()
+                            # cv2.rectangle(self.annotation[self.file_index].img, (int(x1), int(y1)), (int(x2), int(y2)), self.excluded_color, 3)
+                            # cv2.imshow('Annotation', self.annotation[self.file_index].img)
+            
+            #exclude polygon from masks
+            for classes_masks in self.annotation[self.file_index].classes_masks:
+                for i, masks in enumerate(classes_masks):
+                    masks: PolygonalMask
+                    points = [(p.x, p.y) for p in masks.points]
+
+                    if len(points) < 3:
+                        continue
+
+                    mask_path = Path(points)
+                    click_point = (x, y)
+
+                    if mask_path.contains_point(click_point):
+                        
+                        clicked_array = np.array(points, dtype=np.float32)
+                        
+                        excluded_mask = False
+                        # if already excluded, remove from blacklist
+                        for excluded_mask in self.annotation[self.file_index].excluded_classes_masks:
+                            excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
+                            excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
+
+                            if clicked_array.shape == excluded_mask_array.shape:
+                                excluded_mask = True
+                            
+                            if excluded_mask:
+                                break
+
+                        if excluded_mask:
+                            self.annotation[self.file_index].excluded_classes_masks.remove(masks)
+                        else:
+                            self.annotation[self.file_index].excluded_classes_masks.append(masks)
+                        self.render_annotation()
+
+
+    def _mouse_click_annotate_callback(self, event, x, y, flags, param):
+
+        self.x_y_mouse = self.normalize_by_scale(x, y, self.resize_scale)
 
         if event == cv2.EVENT_MOUSEMOVE:
-            if self.drawing_rectangle:
-                img_copy = self.current_annotation.img.copy()
-                cv2.rectangle(img_copy, self.rectangle_start_point, (x, y), (0, 255, 0), 2)
-                self.resize_and_show(img_copy)
+            self.mouse_move_callback(x, y)
             
 
         elif event == cv2.EVENT_LBUTTONUP:
-            if self.drawing_rectangle:
-                self.drawing_rectangle = False
-                self.create_rectangle = False
-                self.end_point = (x, y)
-
-                x1, y1 = self.rectangle_start_point
-                x2, y2 = self.end_point
-
-                h, w = self.current_annotation.img.shape[:2]
-                h_original, w_original = self.current_annotation.original_img.shape[:2]
-                x1 = (x1/w)*w_original
-                x2 = (x2/w)*w_original
-                y1 = (y1/h)*h_original
-                y2 = (y2/h)*h_original
-                bb = BoundingBox(
-                    label=self.current_label,
-                    box=torch.tensor([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)], dtype=torch.float32),
-                    confidence=1.0
-                )
-                self.annotation[self.file_index].classes_boxes.append([bb])
-
-                self.render_annotation()
+            self.lmb_up_callback(x, y)
+                
 
         if event == cv2.EVENT_RBUTTONUP:
             if self.drawing_poly:
-                self.drawing_poly = False
-                self.create_poly = False
-                self.poly = []
-                self.render_annotation()
-
+                self.rmb_up_callback()
 
 
         if event == cv2.EVENT_LBUTTONDOWN:
-            if self.show_ui:
-                for i, label in enumerate(self.labels):
-                    if 10 <= x <= 200 and 10 + i*40 <= y <= 40 + i*40:
-                        self.current_label = label
-                        self.render_annotation()
-            if self.create_rectangle:
-                self.rectangle_start_point = (x, y)
-                self.drawing_rectangle = True
-
-            if self.create_poly:
-                self.poly.append(Point(x, y))
-                self.drawing_poly = True
-
-            else:
-                # exclude clicked box from annotations
-                for classes_boxes in self.annotation[self.file_index].classes_boxes:
-                    for i, bounding_boxes in enumerate(classes_boxes): 
-                        x1, y1, x2, y2 = bounding_boxes.box
-                        if x1 <= x <= x2 and y1 <= y <= y2:
-                            
-                            excluded_box = False
-                            for bb in self.annotation[self.file_index].excluded_classes_boxes:
-                                excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
-                                if excluded_box:
-                                    break
-                                
-                            # error when users excludes all annotations
-                            if excluded_box:
-                                self.annotation[self.file_index].excluded_classes_boxes.remove(bounding_boxes)
-                            else:
-                                self.annotation[self.file_index].excluded_classes_boxes.append(bounding_boxes)
-                            self.render_annotation()
-                                # cv2.rectangle(self.annotation[self.file_index].img, (int(x1), int(y1)), (int(x2), int(y2)), self.excluded_color, 3)
-                                # cv2.imshow('Annotation', self.annotation[self.file_index].img)
-                
-                #exclude polygon from masks
-                for classes_masks in self.annotation[self.file_index].classes_masks:
-                    for i, masks in enumerate(classes_masks):
-                        masks: PolygonalMask
-                        points = [(p.x, p.y) for p in masks.points]
-
-                        if len(points) < 3:
-                            continue
-
-                        mask_path = Path(points)
-                        click_point = (x, y)
-
-                        if mask_path.contains_point(click_point):
-                            
-                            clicked_array = np.array(points, dtype=np.float32)
-                            
-                            excluded_mask = False
-                            # if already excluded, remove from blacklist
-                            for excluded_mask in self.annotation[self.file_index].excluded_classes_masks:
-                                excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
-                                excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
-
-                                if clicked_array.shape == excluded_mask_array.shape:
-                                    excluded_mask = True
-                                
-                                if excluded_mask:
-                                    break
-
-                            if excluded_mask:
-                                self.annotation[self.file_index].excluded_classes_masks.remove(masks)
-                            else:
-                                self.annotation[self.file_index].excluded_classes_masks.append(masks)
-                            self.render_annotation()
+            self.lmb_down_callback(x, y)
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]
