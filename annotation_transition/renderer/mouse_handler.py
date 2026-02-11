@@ -1,6 +1,7 @@
 import cv2
 from annotation_transition.renderer.action_dispatcher import ActionDispatcher
 from annotation_transition.renderer.interaction_policy import InteractionPolicy, PolicyResult
+from annotation_transition.renderer.render_data import RenderData
 from types.entities import Point
 from annotation_transition.renderer.input_intent import InputIntent
 from annotation_transition.renderer.annotation_action import AnnotationAction
@@ -16,22 +17,23 @@ class InputContext:
 
 class MouseHandler:
 
-    def __init__(self, controller: AnnotationController, command_dispatcher: ActionDispatcher, policy: InteractionPolicy):
+    def __init__(self, data: RenderData, command_dispatcher: ActionDispatcher, policy: InteractionPolicy):
 
         self.command_dispatcher = command_dispatcher
         self.policy = policy
-        self.controller = controller
+        self.data = data
 
     def mouse_callback_default(self, intent: InputIntent, x, y):
-        result: PolicyResult = self.policy.decide(self.controller.draw_state, intent)
+        result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
 
         if x and y:
+            self.data.mouse_xy = Point(x, y)
             self.command_dispatcher.dispatch(result.action, Point(x, y))
         else:
             self.command_dispatcher.dispatch(result.action)
 
         if result.next_state:
-            self.controller.draw_state = result.next_state
+            self.data.draw_state = result.next_state
 
 
     def mouse_move_callback(self, x, y):

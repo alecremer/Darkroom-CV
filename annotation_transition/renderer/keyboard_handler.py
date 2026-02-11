@@ -25,17 +25,7 @@ class KeyboardHandler:
         cmds.append(KeyCommand('q', self.action_dispatcher.dispatch(AnnotationAction.QUIT)))
         cmds.append(KeyCommand('r', self.action_dispatcher.dispatch(AnnotationAction.CREATE_BOX)))
 
-       
-        # cmds: List[KeyCommand] = []
-        # cmds.append(KeyCommand('g', self.annotation_engine.next_img))
-        # cmds.append(KeyCommand('d', self.annotation_engine.previous_img))
-        # cmds.append(KeyCommand('t', self.annotation_engine.reset_annotation_cell))
-        # cmds.append(KeyCommand('e', self.annotation_engine.toggle_show_ui))
-        # cmds.append(KeyCommand('s', self.annotation_engine.save_annotations))
-        # cmds.append(KeyCommand('w', self.annotation_engine.undo_polygon_point))
-        # cmds.append(KeyCommand('f', self.annotation_engine.done_or_create_polygon))
-        # cmds.append(KeyCommand('q', self.annotation_engine.quit))
-        # cmds.append(KeyCommand('r', self.annotation_engine.set_create_rectangle))
+      
 
         self.commands = cmds
 

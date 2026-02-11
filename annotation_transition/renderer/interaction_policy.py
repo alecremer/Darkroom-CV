@@ -1,7 +1,7 @@
-from annotation_transition.annotation_renderer.annotation_action import AnnotationAction
+from annotation_transition.renderer.annotation_action import AnnotationAction
 from draw_state import DrawState
-from annotation_transition.annotation_renderer.annotation_action import AnnotationAction
-from annotation_transition.annotation_renderer.input_intent import InputIntent
+from annotation_transition.renderer.annotation_action import AnnotationAction
+from annotation_transition.renderer.input_intent import InputIntent
 from dataclasses import dataclass
 
 @dataclass(frozen=True)

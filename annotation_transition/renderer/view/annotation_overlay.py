@@ -1,56 +1,60 @@
 import cv2
 from typing import List
-from types.entities import BoundingBox
+from annotation_transition.annotation_cell import AnnotationCell
+from annotation_transition.renderer.render_data import RenderData
+from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
+from types.entities import BoundingBox, Rectangle
 import math
 import numpy as np
 
 class AnnotationOverlay:
 
-    def render_annotation(self):
-        self.current_annotation.img = self.current_annotation.original_img.copy()
-        for bb in self.current_annotation.classes_boxes:
-            self.bounding_box_to_image_box(self.current_annotation.img, bb)
-        
-        self.bounding_box_to_image_box(self.current_annotation.img, self.current_annotation.excluded_classes_boxes, self.excluded_color)
-        self.mark_validation_img(self.current_annotation.img, self.current_annotation.valid)
+    def __init__(self):
+        self.excluded_color = (150, 150, 150)
+        self.construct_poly_color = (128, 128, 255)
 
-        if self.show_ui:
-            self.draw_label_buttons(self.current_annotation.img)
+    def draw_construct_box(self, img, rect: Rectangle):
+        img_copy = img.copy()
+        color = (0, 255, 0)
+        thickness = 2
+        OpencvRenderPrimitives.draw_rectangle(img_copy, rect, color, thickness)
 
-            # put name of image
-            image_name = self.current_annotation.id
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 1
-            color = (255, 255, 255)  
-            thickness = 2
-            (text_width, text_height), baseline = cv2.getTextSize(image_name, font, font_scale, thickness)
-            x = self.current_annotation.img.shape[1] - text_width - 10  # 10px de margem
-            y = self.current_annotation.img.shape[0] - 10  # 10px acima da borda inferior
-            cv2.putText(self.current_annotation.img, image_name, (x, y), font, font_scale, color, thickness)
-        
-        img_copy = self.current_annotation.img
+    def render_annotation(self, data: RenderData):
+        current_annotation = data.current_annotation
+        img = current_annotation.original_img.copy()
+        # self.current_annotation.img = self.current_annotation.original_img.copy()
 
-        # render annotation active polygon
-        if len(self.poly)>0:
-            img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
+        # for list of boxes, render boxes
+        for bb in current_annotation.classes_boxes:
+            self.bounding_box_to_image_box(current_annotation.img, bb)
         
-        classes_masks = self.annotation[self.file_index].classes_masks
+        # render excluded boxes
+        self.bounding_box_to_image_box(current_annotation.img, current_annotation.excluded_classes_boxes, self.excluded_color)
+
+        img_copy = current_annotation.img
+
+        # render construct polygon
+        if len(data.construct_poly)>0:
+            img_copy = OpencvRenderPrimitives.render_poly(data.construct_poly, img_copy, self.construct_poly_color)
+            # img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
+        
+        classes_masks = data.annotations[data.annotation_index].classes_masks
         for masks in classes_masks:
             if len(masks) > 0:
                 for mask in masks:
                     if mask:
                         poly = mask.points
-                        img_copy = self.render_poly(poly, img_copy)
+                        img_copy = OpencvRenderPrimitives.render_poly(poly, img_copy)
         
-        excluded_masks = self.annotation[self.file_index].excluded_classes_masks
+        excluded_masks = data.annotations[data.annotation_index].excluded_classes_masks
         for mask in excluded_masks:
             if mask:
                 poly = mask.points
-                img_copy = self.render_poly(poly, img_copy, self.excluded_color)
+                img_copy = OpencvRenderPrimitives.render_poly(poly, img_copy, self.excluded_color)
             # img_copy = self.current_annotation.img.copy()
         
-        self.draw_guide_lines(img_copy, self.x_y_mouse[0], self.x_y_mouse[1])
-        self.resize_and_show(img_copy)
+        self.draw_guide_lines(img_copy, data.mouse_xy.x, data.mouse_xy.y)
+        OpencvRenderPrimitives.resize_and_show(img_copy)
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]

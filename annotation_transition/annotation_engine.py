@@ -11,8 +11,6 @@ class AnnotationEngine:
     
     def __init__(self):
         self.current_annotation = AnnotationCell()
-        self.construct_rectangle = Rectangle()
-        self.construct_poly: List[Point] = []
         self.current_label: str = ""
         self.file_index: int = 0
         self.annotation: List[AnnotationCell] = []
@@ -47,15 +45,12 @@ class AnnotationEngine:
 
         self.annotate_bbox(rectangle_normalized, self.current_label)        
 
-    def cancel_construct_poly(self):
-        self.construct_poly = []
+    
 
     def select_label(self, p: Point):
         label = self.view.select_label(p)
         if label: self.current_label = label
 
-    def start_construct_rectangle(self, p: Point):
-            self.construct_rectangle.p0 = p
 
     def exclude_box_from_annotation(self, p: Point):
         x, y = p
@@ -114,11 +109,7 @@ class AnnotationEngine:
 
     def execute(self, action: AnnotationAction, payload: Any):
         
-        if action is AnnotationAction.DRAW_CONSTRUCT_RECTANGLE:
-            self.construct_rectangle.p = payload
-            self.view.draw_construct_rectangle(self.current_annotation.img, self.construct_rectangle)
-
-        elif action is AnnotationAction.ANNOTATE_BBOX:
+        if action is AnnotationAction.ANNOTATE_BBOX:
             self.construct_rectangle.p = payload
             self.annotate_bbox_from_construct_rect()
 

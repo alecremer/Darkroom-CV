@@ -40,12 +40,6 @@ class AnnotationView:
             OpencvRenderPrimitives.draw_btn(img, btn.rect, color, text_color, text_x0, text_y0, btn.text, 0.8, 2)
 
 
-    def draw_construct_rectangle(self, img, rect: Rectangle):
-        img_copy = img.copy()
-        color = (0, 255, 0)
-        thickness = 2
-        OpencvRenderPrimitives.draw_rectangle(img_copy, rect, color, thickness)
-
     def select_label(self, p: Point) -> str:
         x, y = p
         if self.show_ui:
