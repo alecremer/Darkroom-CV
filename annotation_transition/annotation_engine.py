@@ -1,5 +1,5 @@
-from annotation_action import AnnotationAction
-from annotation_view import AnnotationView
+from annotation_transition.annotation_renderer.annotation_action import AnnotationAction
+from annotation_transition.opencv.annotation_view import AnnotationView
 from types.entities import BoundingBox, PolygonalMask, Rectangle, Point
 from annotation_cell import AnnotationCell
 from typing import List, Any
@@ -9,11 +9,10 @@ import numpy as np
 
 class AnnotationEngine:
     
-    def __init__(self, view: AnnotationView):
+    def __init__(self):
         self.current_annotation = AnnotationCell()
         self.construct_rectangle = Rectangle()
         self.construct_poly: List[Point] = []
-        self.view: AnnotationView = view
         self.current_label: str = ""
         self.file_index: int = 0
         self.annotation: List[AnnotationCell] = []

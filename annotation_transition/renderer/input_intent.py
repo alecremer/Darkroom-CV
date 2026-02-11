@@ -1,6 +1,6 @@
 from enum import Enum
 
-class CommandIntent(Enum):
+class InputIntent(Enum):
     
     IDLE = 0,
     MOVE = 10,

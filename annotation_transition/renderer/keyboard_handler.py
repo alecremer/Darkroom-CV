@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from annotation_transition.annotation_tool import AnnotationTool
 from typing import List
+from annotation_transition.renderer.action_dispatcher import ActionDispatcher
 
 @dataclass
 class KeyCommand:
@@ -9,8 +9,8 @@ class KeyCommand:
 
 class KeyboardHandler:
 
-    def __init__(self, annotation_engine: AnnotationTool):
-        self.annotation_engine = annotation_engine
+    def __init__(self, action_dispatcher: ActionDispatcher):
+        self.annotation_engine = action_dispatcher
         self.commands = List[KeyCommand]
 
     def build(self):

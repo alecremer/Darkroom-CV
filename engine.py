@@ -5,7 +5,7 @@ import math
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple
-from annotation_transition.annotation_tool import AnnotationTool, AnnotateModelConfig
+from annotation_transition.annotation_pipeline import AnnotationPipeline, AnnotateModelConfig
 from types.model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig
 from configs.video_inference_config import VideoInferenceConfig
@@ -69,7 +69,7 @@ class Engine:
         result = model_trained.predict(test_path, show=show_image)[0] 
 
     def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig]):
-        annotation_tool = AnnotationTool()
+        annotation_tool = AnnotationPipeline()
         weight_path = [config.weights_path for config in annotate_model_config]
         models_trained = self._set_trained_models(weight_path)
         annotation_tool.annotate(img_path, annotate_model_config, models_trained)
