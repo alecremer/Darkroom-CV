@@ -11,4 +11,4 @@ class AnnotationEngineAction(Enum):
     UNDO_MASK_POINT = "undo_mask_point"
     DONE_MASK = "done_mask"
     UPDATE = "update"
-    # CREATE_BOX = "150",
+    QUIT = "quit"

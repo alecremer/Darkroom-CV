@@ -6,14 +6,16 @@ from annotation_transition.renderer.render_data import RenderData
 from entities.entities import Point, Rectangle
 
 class ActionHandler:
-    def __init__(self, render_data: RenderData):
+    def __init__(self, render_data: RenderData, on_quit_requested: callable):
         self.render_data = render_data
+        self.on_quit_requested = on_quit_requested
 
     def can_handle(self, action: AnnotationAction) -> bool:
         return action in {AnnotationAction.START_CONSTRUCT_RECTANGLE,
                           AnnotationAction.DRAW_CONSTRUCT_RECTANGLE,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.TOGGLE_SHOW_UI,
+                          AnnotationAction.QUIT,
                           AnnotationAction.ANNOTATE_BBOX}
 
     def handle(self, action: AnnotationAction, payload: Any):
@@ -35,3 +37,6 @@ class ActionHandler:
 
         elif action is AnnotationAction.TOGGLE_SHOW_UI:
             self.render_data.show_ui = not self.render_data.show_ui 
+
+        elif action is AnnotationAction.QUIT:
+            self.on_quit_requested()

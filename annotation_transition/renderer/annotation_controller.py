@@ -18,8 +18,9 @@ class AnnotationController:
         self.view = AnnotationView(labels)
         self.overlay = AnnotationOverlay()
         self.data: RenderData = RenderData()
+        self.quit: bool = False
 
-        self.action_handler = ActionHandler(self.data)
+        self.action_handler = ActionHandler(self.data, self.set_quit)
         self.command_adapter = CommandAdapter(comm)
         self.action_dispatcher = ActionDispatcher(self.action_handler, self.command_adapter, self.data)
         self.policy = InteractionPolicy()
@@ -31,6 +32,9 @@ class AnnotationController:
         self.data.update_from(d)
         print(self.data.label)
 
+    def set_quit(self):
+        self.quit = True
+
     def run(self):
-        while True:
+        while not self.quit:
             self.view_pipeline.routine(self.data.img)
