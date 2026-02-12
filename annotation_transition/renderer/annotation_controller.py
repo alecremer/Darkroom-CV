@@ -3,8 +3,8 @@ from annotation_transition.renderer.action_dispatcher import ActionDispatcher
 from annotation_transition.renderer.annotation_action import AnnotationAction
 from annotation_transition.renderer.command_adapter import CommandAdapter
 from annotation_transition.renderer.interaction_policy import InteractionPolicy
-from annotation_transition.renderer.keyboard_handler import KeyboardHandler
-from annotation_transition.renderer.mouse_handler import MouseHandler
+from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
+from annotation_transition.renderer.view.mouse_handler import MouseHandler
 from annotation_transition.renderer.render_data import RenderData
 from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
 from annotation_transition.renderer.view.annotation_view import AnnotationView

@@ -1,7 +1,7 @@
 from typing import Any, List
 import cv2
-from annotation_transition.renderer.keyboard_handler import KeyboardHandler
-from annotation_transition.renderer.mouse_handler import InputContext, MouseHandler
+from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
+from annotation_transition.renderer.view.mouse_handler import InputContext, MouseHandler
 from annotation_transition.renderer.render_data import RenderData
 from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
 from annotation_transition.renderer.view.annotation_view import AnnotationView
