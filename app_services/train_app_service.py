@@ -1,7 +1,7 @@
 from app_services.app_service import AppService
+from configs.project_config_loader import ProjectConfigLoader
 from runner import Runner
 from app_services.app_service import AppService
-from project_config_loader import ProjectConfigLoader
 
 
 class TrainAppService(AppService):

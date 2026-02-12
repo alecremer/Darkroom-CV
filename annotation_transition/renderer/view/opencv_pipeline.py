@@ -1,10 +1,10 @@
 from typing import Any, List
 import cv2
-from mouse_handler import MouseHandler, InputContext
-from keyboard_handler import KeyboardHandler
-from annotation_view import AnnotationView
-from annotation_overlay import AnnotationOverlay
+from annotation_transition.renderer.keyboard_handler import KeyboardHandler
+from annotation_transition.renderer.mouse_handler import InputContext, MouseHandler
 from annotation_transition.renderer.render_data import RenderData
+from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
+from annotation_transition.renderer.view.annotation_view import AnnotationView
 
 class OpencvPipeline:
 
@@ -16,7 +16,7 @@ class OpencvPipeline:
         self.data = data
         self.labels = labels
         
-        self.input_context = InputContext()
+        self.input_context = InputContext(1920)
         self.keyboard_handler.build()
         self.view.build_label_btns(labels)
 
@@ -26,7 +26,10 @@ class OpencvPipeline:
 
     def routine(self, img: Any):
 
-        key = cv2.waitKey(10) & 0xFF  
+        
+
+        key = cv2.waitKey(10) & 0xFF
+        
         self.keyboard_handler.routine(key)
         
         if self.data.show_ui:
@@ -36,6 +39,12 @@ class OpencvPipeline:
             self.overlay.draw_construct_box(img, self.data.construct_box)
 
         self.overlay.render_annotation(self.data)
+        
+        screen_res = 1080, 720 #TODO find a best way 
+        scale_width = screen_res[0] / self.data.current_annotation.original_img.shape[1]
+        scale_height = screen_res[1] / self.data.current_annotation.original_img.shape[0]
+        scale = min(scale_width, scale_height, 1.0) 
+        self.input_context.resize_scale = scale
 
         if cv2.getWindowProperty(self.window_name, cv2.WND_PROP_VISIBLE) < 1:
             print("killing...")

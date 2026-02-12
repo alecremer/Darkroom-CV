@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from types.model_types import ModelType, Model
+from entities.model_types import ModelType, Model
 
 @dataclass
 class DetectModelConfig:

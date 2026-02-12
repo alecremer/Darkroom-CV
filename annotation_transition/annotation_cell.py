@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 from typing import List
-from types.entities import BoundingBox, PolygonalMask
+from entities.entities import BoundingBox, PolygonalMask
 
 @dataclass
 class AnnotationCell:

@@ -1,16 +1,20 @@
 from typing import Any
 from annotation_transition.renderer.action_handler import ActionHandler
+from annotation_transition.renderer.action_mapper import ActionMapper
 from annotation_transition.renderer.annotation_action import AnnotationAction
 from annotation_transition.renderer.command_adapter import CommandAdapter
+from annotation_transition.renderer.render_data import RenderData
 
 
 class ActionDispatcher:
-    def __init__(self, handler: ActionHandler, command_adapter: CommandAdapter):
+    def __init__(self, handler: ActionHandler, command_adapter: CommandAdapter, data: RenderData):
         self.handler = handler
         self.command_adapter = command_adapter
+        self.data: RenderData = data
 
-    def dispatch(self, action: AnnotationAction, payload: Any):
+    def dispatch(self, action: AnnotationAction, payload: Any = None):
         if self.handler.can_handle(action):
             self.handler.handle(action, payload)
-        else:
-            self.command_adapter.send(action, payload)
+        elif ActionMapper.can_map(action):
+            d = self.command_adapter.send(action, payload)
+            self.data.update_from(d)

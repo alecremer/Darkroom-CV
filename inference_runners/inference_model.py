@@ -1,5 +1,5 @@
-from types.model_types import Model
-from types.model_tasks import Task
+from entities.model_types import Model
+from entities.model_tasks import Task
 
 class InferenceModel:
     model: Model

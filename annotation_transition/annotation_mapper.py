@@ -1,5 +1,5 @@
 import cv2
-from types.entities import BoundingBox
+from entities.entities import BoundingBox
 import math
 
 class AnnotationMapper:

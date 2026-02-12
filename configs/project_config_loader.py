@@ -1,5 +1,5 @@
-from project_config import ProjectConfig
 from config_resolver import ConfigResolver
+from configs.project_config import ProjectConfig
 
 
 class ProjectConfigLoader:

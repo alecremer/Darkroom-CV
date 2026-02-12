@@ -1,10 +1,10 @@
 from typing import List
-from types.model_types import Model
+from entities.model_types import Model
 from configs.video_inference_config import VideoInferenceConfig
 from configs.detect_model_config import DetectModelConfig
 from enum import Enum
 import cv2
-from types.model_tasks import Task
+from entities.model_tasks import Task
 from video_processor.inference_model import InferenceModel
 
 class LiveDetection:

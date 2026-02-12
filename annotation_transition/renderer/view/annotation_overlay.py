@@ -3,7 +3,7 @@ from typing import List
 from annotation_transition.annotation_cell import AnnotationCell
 from annotation_transition.renderer.render_data import RenderData
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
-from types.entities import BoundingBox, Rectangle
+from entities.entities import BoundingBox, Rectangle
 import math
 import numpy as np
 
@@ -26,16 +26,16 @@ class AnnotationOverlay:
 
         # for list of boxes, render boxes
         for bb in current_annotation.classes_boxes:
-            self.bounding_box_to_image_box(current_annotation.img, bb)
+            self.bounding_box_to_image_box(img, bb)
         
         # render excluded boxes
-        self.bounding_box_to_image_box(current_annotation.img, current_annotation.excluded_classes_boxes, self.excluded_color)
+        self.bounding_box_to_image_box(img, current_annotation.excluded_classes_boxes, self.excluded_color)
 
-        img_copy = current_annotation.img
+        # img_copy = current_annotation.img
 
         # render construct polygon
         if len(data.construct_poly)>0:
-            img_copy = OpencvRenderPrimitives.render_poly(data.construct_poly, img_copy, self.construct_poly_color)
+            img = OpencvRenderPrimitives.render_poly(data.construct_poly, img, self.construct_poly_color)
             # img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
         
         classes_masks = data.annotations[data.annotation_index].classes_masks
@@ -44,17 +44,17 @@ class AnnotationOverlay:
                 for mask in masks:
                     if mask:
                         poly = mask.points
-                        img_copy = OpencvRenderPrimitives.render_poly(poly, img_copy)
+                        img = OpencvRenderPrimitives.render_poly(poly, img)
         
         excluded_masks = data.annotations[data.annotation_index].excluded_classes_masks
         for mask in excluded_masks:
             if mask:
                 poly = mask.points
-                img_copy = OpencvRenderPrimitives.render_poly(poly, img_copy, self.excluded_color)
+                img = OpencvRenderPrimitives.render_poly(poly, img, self.excluded_color)
             # img_copy = self.current_annotation.img.copy()
         
-        self.draw_guide_lines(img_copy, data.mouse_xy.x, data.mouse_xy.y)
-        OpencvRenderPrimitives.resize_and_show(img_copy)
+        self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
+        OpencvRenderPrimitives.resize_and_show(img)
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]

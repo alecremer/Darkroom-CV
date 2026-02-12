@@ -6,10 +6,10 @@ import torch
 import os
 import math
 import re
-from types.model_types import ModelType, Model
+from entities.model_types import ModelType, Model
 from matplotlib.path import Path
 from configs.annotate_model_config import AnnotateModelConfig
-from types.entities import BoundingBox, PolygonalMask, Point
+from entities.entities import BoundingBox, PolygonalMask, Point
 from enum import Enum
 
 

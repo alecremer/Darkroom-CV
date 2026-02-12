@@ -2,14 +2,11 @@ import cv2
 from annotation_transition.renderer.action_dispatcher import ActionDispatcher
 from annotation_transition.renderer.interaction_policy import InteractionPolicy, PolicyResult
 from annotation_transition.renderer.render_data import RenderData
-from types.entities import Point
+from entities.entities import Point
 from annotation_transition.renderer.input_intent import InputIntent
 from annotation_transition.renderer.annotation_action import AnnotationAction
-from annotation_engine import AnnotationEngine
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from dataclasses import dataclass
-from annotation_controller import AnnotationController
-from action_handler import ActionHandler
 
 @dataclass
 class InputContext:

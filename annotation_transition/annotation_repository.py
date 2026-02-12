@@ -3,21 +3,22 @@ import numpy as np
 import torch
 import os
 from annotation_transition.tools import Tools
-from types.entities import BoundingBox, PolygonalMask, Point
+from entities.entities import BoundingBox, PolygonalMask, Point
+import cv2
 
 class AnnotationRepository:
 
-    def __init__(self, labels, labels_path):
+    def __init__(self, labels, img_path):
         self.labels = labels
-        self.labels_path = labels_path
+        self.img_path = img_path
+        self.labels_path = img_path + "/labels"
 
     def create_classes_file(self):
         with open(self.labels_path + "/classes.txt", "w") as f:
             for label in self.labels:
                 f.write(f"{label}\n")
 
-    def create_work_dir(self, img_path):
-        self.labels_path = img_path + "/labels"
+    def create_work_dir(self):
         os.makedirs(self.labels_path, exist_ok=True)
         self.load_annotation = True
         self.autosave = True
@@ -92,10 +93,10 @@ class AnnotationRepository:
         self.label_list_sorted = sorted(labels_list, key=Tools.natural_sort)
 
 
-    def filter_workdir(self, img_path):
+    def filter_workdir(self):
         image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
         folder_list = [
-            f for f in os.listdir(img_path)
+            f for f in os.listdir(self.img_path)
             if os.path.splitext(f)[1].lower() in image_extensions
         ]
         return folder_list
@@ -147,3 +148,11 @@ class AnnotationRepository:
                     )
                     classes_masks.append([mask])
         return img_boxes, classes_masks
+    
+    def load_img(self, img_path, folder_list, file_index):
+        file = folder_list[file_index]
+        id = file.split(".")[0]
+        img_original = cv2.imread(os.path.join(img_path, file))
+        img = img_original.copy()
+
+        return img, id

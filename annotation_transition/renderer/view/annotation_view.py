@@ -1,6 +1,6 @@
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from dataclasses import dataclass
-from types.entities import Point, Rectangle, BoundingBox
+from entities.entities import Point, Rectangle, BoundingBox
 from typing import List
 import cv2
 import math

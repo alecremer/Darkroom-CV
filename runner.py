@@ -3,7 +3,7 @@ from configs.detect_model_config import DetectModelConfig
 from config_resolver import ConfigResolver
 from demo_tools import download_demo_data
 from pathlib import Path
-from project_config import ProjectConfig
+from configs.project_config import ProjectConfig
 
 class Runner:
 

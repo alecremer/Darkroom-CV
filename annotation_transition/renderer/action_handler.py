@@ -1,6 +1,7 @@
-from render_data import RenderData
-from annotation_action import AnnotationAction
 from typing import Any
+
+from annotation_transition.renderer.annotation_action import AnnotationAction
+from annotation_transition.renderer.render_data import RenderData
 
 class ActionHandler:
     def __init__(self, render_data: RenderData):

@@ -1,4 +1,4 @@
-from types.model_tasks import Task
+from entities.model_tasks import Task
 from typing import Any
 
 class InferenceResult:
