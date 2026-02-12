@@ -9,6 +9,7 @@ class ActionMapper:
                           AnnotationAction.PREVIOUS_IMG,
                           AnnotationAction.ANNOTATE_BBOX,
                           AnnotationAction.QUIT,
+                          AnnotationAction.EXCLUDE_CLICKED_ENTITY,
                           AnnotationAction.UPDATE}
 
     @staticmethod
@@ -19,3 +20,4 @@ class ActionMapper:
         elif action is AnnotationAction.UPDATE: return "update"
         elif action is AnnotationAction.ANNOTATE_BBOX: return "annotate_box"
         elif action is AnnotationAction.QUIT: return "quit"
+        elif action is AnnotationAction.EXCLUDE_CLICKED_ENTITY: return "exclude_entity"

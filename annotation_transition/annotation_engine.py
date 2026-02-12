@@ -58,7 +58,7 @@ class AnnotationEngine:
                 if x1 <= x <= x2 and y1 <= y <= y2:
                     
                     excluded_box = False
-                    for bb in self.annotation[file_index].excluded_classes_boxes:
+                    for bb in annotation[file_index].excluded_classes_boxes:
                         excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
                         if excluded_box:
                             break

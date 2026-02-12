@@ -24,7 +24,6 @@ class ActionHandler:
             pass
 
         elif action is AnnotationEngineAction.ANNOTATE_BBOX:
-            print("entramo")
             self.engine.annotate_bbox(payload, data.label, data.annotations, data.file_index)
 
         # elif action is AnnotationEngineAction.SELECT_LABEL:
@@ -33,6 +32,6 @@ class ActionHandler:
         # elif action is AnnotationEngineAction.START_CONSTRUCT_RECTANGLE:
         #     self.start_construct_rectangle(payload)
 
-        # elif action is AnnotationEngineAction.EXCLUDE_CLICKED_ENTITY:
-        #     self.exclude_box_from_annotation(payload)
-        #     self.exclude_polygon_from_annotations(payload)
+        elif action is AnnotationEngineAction.EXCLUDE_CLICKED_ENTITY:
+            self.engine.exclude_box_from_annotation(payload, data.annotations, data.file_index)
+            # self.engine.exclude_polygon_from_annotations(payload, data.annotations, data.file_index)
