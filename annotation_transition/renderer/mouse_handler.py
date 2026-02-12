@@ -22,6 +22,7 @@ class MouseHandler:
 
     def mouse_callback_default(self, intent: InputIntent, x, y):
         result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
+        print(f"result: {result.action.name}")
 
         if x and y:
             self.data.mouse_xy = Point(x, y)

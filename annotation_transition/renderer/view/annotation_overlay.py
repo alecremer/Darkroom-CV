@@ -14,14 +14,12 @@ class AnnotationOverlay:
         self.construct_poly_color = (128, 128, 255)
 
     def draw_construct_box(self, img, rect: Rectangle):
-        img_copy = img.copy()
         color = (0, 255, 0)
         thickness = 2
-        OpencvRenderPrimitives.draw_rectangle(img_copy, rect, color, thickness)
+        OpencvRenderPrimitives.draw_rectangle(img, rect, color, thickness)
 
-    def render_annotation(self, data: RenderData):
+    def render_annotation(self, img, data: RenderData):
         current_annotation = data.current_annotation
-        img = current_annotation.original_img.copy()
         # self.current_annotation.img = self.current_annotation.original_img.copy()
 
         # for list of boxes, render boxes

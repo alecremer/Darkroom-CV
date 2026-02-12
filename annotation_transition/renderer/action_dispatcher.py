@@ -15,6 +15,6 @@ class ActionDispatcher:
     def dispatch(self, action: AnnotationAction, payload: Any = None):
         if self.handler.can_handle(action):
             self.handler.handle(action, payload)
-        elif ActionMapper.can_map(action):
+        if ActionMapper.can_map(action):
             d = self.command_adapter.send(action, payload)
             self.data.update_from(d)

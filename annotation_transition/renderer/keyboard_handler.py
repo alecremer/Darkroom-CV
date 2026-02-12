@@ -23,7 +23,7 @@ class KeyboardHandler:
         cmds.append(KeyCommand('w', lambda: self.action_dispatcher.dispatch(AnnotationAction.UNDO_MASK_POINT)))
         cmds.append(KeyCommand('f', lambda: self.action_dispatcher.dispatch(AnnotationAction.DONE_MASK)))
         cmds.append(KeyCommand('q', lambda: self.action_dispatcher.dispatch(AnnotationAction.QUIT)))
-        cmds.append(KeyCommand('r', lambda: self.action_dispatcher.dispatch(AnnotationAction.CREATE_BOX)))
+        cmds.append(KeyCommand('r', lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_RECTANGLE)))
 
       
 

@@ -26,10 +26,9 @@ class OpencvPipeline:
 
     def routine(self, img: Any):
 
-        
-
         key = cv2.waitKey(10) & 0xFF
         
+        img = self.data.current_annotation.original_img.copy()
         self.keyboard_handler.routine(key)
         
         if self.data.show_ui:
@@ -38,7 +37,7 @@ class OpencvPipeline:
         if self.data.construct_box:
             self.overlay.draw_construct_box(img, self.data.construct_box)
 
-        self.overlay.render_annotation(self.data)
+        self.overlay.render_annotation(img, self.data)
         
         screen_res = 1080, 720 #TODO find a best way 
         scale_width = screen_res[0] / self.data.current_annotation.original_img.shape[1]
