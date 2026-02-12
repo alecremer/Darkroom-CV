@@ -29,7 +29,6 @@ class ActionHandler:
 
         elif action is AnnotationAction.DRAW_CONSTRUCT_RECTANGLE:
             self.render_data.construct_box.p=payload
-            print(f"caiu no construct {payload}")
 
         elif action is AnnotationAction.CANCEL_CONSTRUCT_MASK:
             self.render_data.construct_poly = []

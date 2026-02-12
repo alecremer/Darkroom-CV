@@ -22,7 +22,6 @@ class MouseHandler:
 
     def mouse_callback_default(self, intent: InputIntent, x, y):
         result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
-        print(f"result: {result.action.name}")
 
         if x and y:
             self.data.mouse_xy = Point(x, y)
@@ -52,7 +51,7 @@ class MouseHandler:
     def lmb_down_callback(self, x, y):
 
         self.command_dispatcher.dispatch(AnnotationAction.SELECT_LABEL, Point(x, y))
-        self.mouse_callback_default(InputIntent.LMB_DOWN)
+        self.mouse_callback_default(InputIntent.LMB_DOWN, x, y)
 
 
     def mouse_callback(self, event, x, y, flags, param: InputContext):

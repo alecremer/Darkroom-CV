@@ -27,7 +27,7 @@ class AnnotationEngine:
 
     def annotate_bbox(self, rect: Rectangle, label: str, annotation: List[AnnotationCell], file_index: int):
 
-        x1, y1, x2, y2 = rect
+        x1, y1, x2, y2 = rect.to_coords()
         bb = BoundingBox(
             label=label,
             box=torch.tensor([min(x1, x2), min(y1, y2), max(x1, x2), max(y1, y2)], dtype=torch.float32),

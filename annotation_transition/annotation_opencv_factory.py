@@ -16,7 +16,7 @@ class AnnotationOpencvFactory:
 
         self.interface.run()
 
-    def comm_handler(self, action: str, payload: Any):
+    def comm_handler(self, action: str, payload: Any = None):
         action_mapped = AnnotationEngineAction(action)
-        self.pipeline.run(action_mapped)
+        self.pipeline.run(action_mapped, payload)
         return self.pipeline.data

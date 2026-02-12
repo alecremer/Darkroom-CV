@@ -23,8 +23,9 @@ class ActionHandler:
         if action is AnnotationEngineAction.UPDATE:
             pass
 
-        # if action is AnnotationEngineAction.ANNOTATE_BBOX:
-        #     self.engine.annotate_bbox(payload, data.label, data.annotations, data.file_index)
+        elif action is AnnotationEngineAction.ANNOTATE_BBOX:
+            print("entramo")
+            self.engine.annotate_bbox(payload, data.label, data.annotations, data.file_index)
 
         # elif action is AnnotationEngineAction.SELECT_LABEL:
         #     self.select_label(payload)

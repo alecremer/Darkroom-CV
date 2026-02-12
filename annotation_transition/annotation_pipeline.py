@@ -1,6 +1,6 @@
 import cv2
 from dataclasses import dataclass
-from typing import Tuple, List
+from typing import Any, Tuple, List
 import os
 from annotation_transition.action_handler import ActionHandler
 from annotation_transition.annotation_cell import AnnotationCell
@@ -48,7 +48,7 @@ class AnnotationPipeline:
 
         self.action_handler = ActionHandler(self.engine, self.navigator)
 
-    def run(self, action: AnnotationEngineAction):
+    def run(self, action: AnnotationEngineAction, payload: Any = None):
 
         self.action_handler.handle_navigation(action, self.data)
 
@@ -63,7 +63,7 @@ class AnnotationPipeline:
         else:
             self.data.current_annotation = self.data.annotations[self.data.file_index]
 
-        self.action_handler.handle(action, self.data)
+        self.action_handler.handle(action, self.data, payload)
         return self.data
 
 
