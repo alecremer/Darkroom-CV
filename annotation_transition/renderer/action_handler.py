@@ -19,6 +19,7 @@ class ActionHandler:
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.TOGGLE_SHOW_UI,
                           AnnotationAction.QUIT,
+                          AnnotationAction.UNDO_MASK_POINT,
                           AnnotationAction.ANNOTATE_BBOX}
 
     def handle(self, action: AnnotationAction, payload: Any):
@@ -48,9 +49,11 @@ class ActionHandler:
             self.render_data.draw_state = DrawState.IDLE
             self.render_data.construct_poly = []
 
-
         elif action is AnnotationAction.DRAW_CONSTRUCT_MASK:
             self.render_data.construct_poly.append(payload)
+
+        elif action is AnnotationAction.UNDO_MASK_POINT:
+            self.render_data.construct_poly.pop()
 
         elif action is AnnotationAction.QUIT:
             self.on_quit_requested()

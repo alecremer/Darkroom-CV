@@ -16,5 +16,9 @@ class ActionPolicy:
             if data.draw_state is DrawState.DRAWING_MASK:
                 action = AnnotationAction.ANNOTATE_MASK
 
+        if action is AnnotationAction.UNDO_MASK_POINT:
+            if len(data.construct_poly) < 1:
+                action = AnnotationAction.IDLE
+
         
         return action
