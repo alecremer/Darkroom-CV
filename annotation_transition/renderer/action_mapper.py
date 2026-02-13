@@ -9,6 +9,7 @@ class ActionMapper:
                           AnnotationAction.PREVIOUS_IMG,
                           AnnotationAction.ANNOTATE_BBOX,
                           AnnotationAction.ANNOTATE_MASK,
+                          AnnotationAction.RESET_ANNOTATION_CELL,
                           AnnotationAction.QUIT,
                           AnnotationAction.EXCLUDE_CLICKED_ENTITY,
                           AnnotationAction.CREATE_MASK,
@@ -25,3 +26,4 @@ class ActionMapper:
         elif action is AnnotationAction.QUIT: return "quit"
         elif action is AnnotationAction.EXCLUDE_CLICKED_ENTITY: return "exclude_entity"
         elif action is AnnotationAction.CREATE_MASK: return "done_mask"
+        elif action is AnnotationAction.RESET_ANNOTATION_CELL: return "reset_annotation_cell"

@@ -114,4 +114,8 @@ class AnnotationEngine:
                     else:
                         annotation[file_index].excluded_classes_masks.append(masks)
 
-    
+    def reset_annotation_cell(self, annotation: List[AnnotationCell], file_index: int):
+        annotation[self.file_index].classes_boxes = [[]]
+        annotation[self.file_index].classes_masks = [[]]
+        annotation[self.file_index].excluded_classes_boxes = []
+        annotation[self.file_index].excluded_classes_masks = []

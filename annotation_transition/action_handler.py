@@ -29,6 +29,9 @@ class ActionHandler:
         elif action is AnnotationEngineAction.ANNOTATE_MASK:
             self.engine.annotate_mask(payload, data.annotations, data.file_index)
 
+        elif action is AnnotationEngineAction.RESET_ANNOTATION_CELL:
+            self.engine.reset_annotation_cell(data.annotations, data.file_index)
+
         # elif action is AnnotationEngineAction.SELECT_LABEL:
         #     self.select_label(payload)
 
