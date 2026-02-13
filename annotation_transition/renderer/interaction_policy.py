@@ -45,6 +45,9 @@ class InteractionPolicy:
             elif state is DrawState.IDLE:
                 action = AnnotationAction.EXCLUDE_CLICKED_ENTITY
 
+            elif state is DrawState.DRAWING_MASK:
+                action = AnnotationAction.DRAW_CONSTRUCT_MASK
+
         
 
         return PolicyResult(action, next_state)

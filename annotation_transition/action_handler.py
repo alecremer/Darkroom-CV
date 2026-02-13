@@ -26,6 +26,9 @@ class ActionHandler:
         elif action is AnnotationEngineAction.ANNOTATE_BBOX:
             self.engine.annotate_bbox(payload, data.label, data.annotations, data.file_index)
 
+        elif action is AnnotationEngineAction.ANNOTATE_MASK:
+            self.engine.annotate_mask(payload, data.annotations, data.file_index)
+
         # elif action is AnnotationEngineAction.SELECT_LABEL:
         #     self.select_label(payload)
 
@@ -35,3 +38,6 @@ class ActionHandler:
         elif action is AnnotationEngineAction.EXCLUDE_CLICKED_ENTITY:
             self.engine.exclude_box_from_annotation(payload, data.annotations, data.file_index)
             # self.engine.exclude_polygon_from_annotations(payload, data.annotations, data.file_index)
+
+        # elif action is AnnotationEngineAction.DONE_MASK:
+        #     self.engine. (payload, data.annotations, data.file_index)

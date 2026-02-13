@@ -4,7 +4,9 @@ class AnnotationAction(Enum):
     IDLE = 0
     START_CONSTRUCT_RECTANGLE = 5
     DRAW_CONSTRUCT_RECTANGLE = 10
+    DRAW_CONSTRUCT_MASK = 15
     ANNOTATE_BBOX = 20
+    ANNOTATE_MASK = 25
     CANCEL_CONSTRUCT_MASK = 30
     SELECT_LABEL = 40
     START_CONSTRUCT_MASK = 50
@@ -15,7 +17,7 @@ class AnnotationAction(Enum):
     TOGGLE_SHOW_UI = "toggle_show_ui"
     SAVE_ANNOTATIONS = "save_annotations"
     UNDO_MASK_POINT = "undo_mask_point"
-    DONE_MASK = "done_mask"
+    DONE_OR_CREATE_MASK = "done_mask"
     CREATE_MASK = "create_mask"
     QUIT = "quit"
     CREATE_BOX = "create_box"

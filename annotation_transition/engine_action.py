@@ -2,6 +2,7 @@ from enum import Enum
 
 class AnnotationEngineAction(Enum):
     ANNOTATE_BBOX = "annotate_box"
+    ANNOTATE_MASK = "annotate_mask"
     SELECT_LABEL = "select_label"
     EXCLUDE_CLICKED_ENTITY = "exclude_entity"
     NEXT_IMG = "next_img"

@@ -35,6 +35,17 @@ class AnnotationEngine:
         )
         annotation[file_index].classes_boxes.append([bb])
 
+    def annotate_mask(self, mask: PolygonalMask, annotation: List[AnnotationCell], file_index: int):
+        annotation[file_index].classes_masks.append([mask])
+        
+    # def done_or_create_polygon(self):
+    #     mask = PolygonalMask(
+    #         label=self.current_label,
+    #         points=self.poly
+    #     )
+    #     self.annotation[self.file_index].classes_masks.append([mask])
+
+
     # def annotate_bbox_from_construct_rect(self):
     #     img = self.current_annotation.img
     #     original_img = self.current_annotation.original_img

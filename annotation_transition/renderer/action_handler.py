@@ -13,6 +13,9 @@ class ActionHandler:
     def can_handle(self, action: AnnotationAction) -> bool:
         return action in {AnnotationAction.START_CONSTRUCT_RECTANGLE,
                           AnnotationAction.DRAW_CONSTRUCT_RECTANGLE,
+                          AnnotationAction.START_CONSTRUCT_MASK,
+                          AnnotationAction.DRAW_CONSTRUCT_MASK,
+                          AnnotationAction.ANNOTATE_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.TOGGLE_SHOW_UI,
                           AnnotationAction.QUIT,
@@ -37,6 +40,17 @@ class ActionHandler:
 
         elif action is AnnotationAction.TOGGLE_SHOW_UI:
             self.render_data.show_ui = not self.render_data.show_ui 
+
+        elif action is AnnotationAction.START_CONSTRUCT_MASK:
+            self.render_data.draw_state = DrawState.DRAWING_MASK
+        
+        elif action is AnnotationAction.ANNOTATE_MASK:
+            self.render_data.draw_state = DrawState.IDLE
+            self.render_data.construct_poly = []
+
+
+        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK:
+            self.render_data.construct_poly.append(payload)
 
         elif action is AnnotationAction.QUIT:
             self.on_quit_requested()
