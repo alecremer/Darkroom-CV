@@ -12,10 +12,4 @@ class CommandAdapter:
         action_mapped = ActionMapper.map(action)        
         response = self.comm(action_mapped, payload)
 
-        data: RenderData = RenderData()
-        data.annotations = response.annotations
-        data.current_annotation = response.current_annotation
-        data.img = response.img
-        data.label = response.label
-
-        return data
+        return response

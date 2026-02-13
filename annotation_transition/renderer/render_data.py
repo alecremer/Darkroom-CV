@@ -21,6 +21,8 @@ class RenderData:
     def update_from(self, other: "RenderData") -> None:
         # if not isinstance(other, type(self)):
             # raise TypeError("update_from requires same type, type: " + str(type(other)))
+        other_fields = {f.name for f in fields(other)}
 
         for f in fields(self):
-            setattr(self, f.name, getattr(other, f.name))
+            if f.name in other_fields:
+                setattr(self, f.name, getattr(other, f.name))
