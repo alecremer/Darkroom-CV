@@ -37,7 +37,7 @@ class ActionHandler:
 
         elif action is AnnotationEngineAction.EXCLUDE_CLICKED_ENTITY:
             self.engine.exclude_box_from_annotation(payload, data.annotations, data.file_index)
-            # self.engine.exclude_polygon_from_annotations(payload, data.annotations, data.file_index)
+            self.engine.exclude_polygon_from_annotations(payload, data.annotations, data.file_index)
 
         # elif action is AnnotationEngineAction.DONE_MASK:
         #     self.engine. (payload, data.annotations, data.file_index)
