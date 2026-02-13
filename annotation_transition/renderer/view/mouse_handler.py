@@ -2,6 +2,7 @@ import cv2
 from annotation_transition.renderer.action_dispatcher import ActionDispatcher
 from annotation_transition.renderer.interaction_policy import InteractionPolicy, PolicyResult
 from annotation_transition.renderer.render_data import RenderData
+from annotation_transition.renderer.view.button_handler import ButtonHandler
 from entities.entities import Point
 from annotation_transition.renderer.input_intent import InputIntent
 from annotation_transition.renderer.annotation_action import AnnotationAction
@@ -14,11 +15,13 @@ class InputContext:
 
 class MouseHandler:
 
-    def __init__(self, data: RenderData, command_dispatcher: ActionDispatcher, policy: InteractionPolicy):
+    def __init__(self, data: RenderData, command_dispatcher: ActionDispatcher, policy: InteractionPolicy, button_handler: ButtonHandler):
 
         self.command_dispatcher = command_dispatcher
         self.policy = policy
         self.data = data
+        self.btn_handler = button_handler
+
 
     def mouse_callback_default(self, intent: InputIntent, x, y):
         result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
@@ -40,8 +43,9 @@ class MouseHandler:
 
     def lmb_up_callback(self, x, y):
 
+        
+        
         self.mouse_callback_default(InputIntent.LMB_UP, x, y)
-
 
     def rmb_up_callback(self):
 
@@ -49,8 +53,10 @@ class MouseHandler:
 
 
     def lmb_down_callback(self, x, y):
-
-        self.command_dispatcher.dispatch(AnnotationAction.SELECT_LABEL, Point(x, y))
+        
+        if self.data.show_ui:
+            self.btn_handler.handle_btns(Point(x, y))
+        
         self.mouse_callback_default(InputIntent.LMB_DOWN, x, y)
 
 

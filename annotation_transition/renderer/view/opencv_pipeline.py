@@ -1,5 +1,6 @@
 from typing import Any, List
 import cv2
+from annotation_transition.renderer.view.button_handler import ButtonHandler
 from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
 from annotation_transition.renderer.view.mouse_handler import InputContext, MouseHandler
 from annotation_transition.renderer.render_data import RenderData
@@ -18,7 +19,6 @@ class OpencvPipeline:
         
         self.input_context = InputContext(1920)
         self.keyboard_handler.build()
-        self.view.build_label_btns(labels)
 
         self.window_name = "Annotation"
         cv2.namedWindow(self.window_name)
@@ -32,7 +32,12 @@ class OpencvPipeline:
         self.keyboard_handler.routine(key)
         
         if self.data.show_ui:
-            self.view.draw_label_buttons(img, self.labels, self.data.label)
+            self.view.draw_label_buttons(img, self.data.label)
+
+
+        # if self.data.select_label:
+        #     self.data.label_intent = self.view.select_label(self.data.mouse_xy)
+        #     self.data.select_label = False
 
         if self.data.construct_box:
             self.overlay.draw_construct_box(img, self.data.construct_box)

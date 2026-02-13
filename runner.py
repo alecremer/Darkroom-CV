@@ -11,7 +11,7 @@ class Runner:
     def live(self, detect_cfg: DetectModelConfig, project_config: ProjectConfig):
 
         engine = Engine()
-        engine.live_detection(project_config.detect, detect_cfg)    
+        engine.live(project_config.detect, detect_cfg)    
 
     def train(self, project_config: ProjectConfig):
 
@@ -29,6 +29,9 @@ class Runner:
 
         train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
         
+        print("detect_model_cfg")
+        print(annotate_cfg)
+        # engine.annotate(img_path, annotate_cfg)
         engine.annotate(img_path, annotate_cfg)
 
     def test(self, file_config_or_path: str = "config.yaml"):

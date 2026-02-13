@@ -13,6 +13,7 @@ class RenderData:
     annotation_index: int = 0
     label: str = ""
     show_ui: bool = False
+    select_label: bool = False
     img: Any | None = None
     mouse_xy: Point | None = field(default_factory= lambda: Point(0, 0))
     draw_state: DrawState = DrawState.IDLE

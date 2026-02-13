@@ -32,8 +32,8 @@ class ActionHandler:
         elif action is AnnotationEngineAction.RESET_ANNOTATION_CELL:
             self.engine.reset_annotation_cell(data.annotations, data.file_index)
 
-        # elif action is AnnotationEngineAction.SELECT_LABEL:
-        #     self.select_label(payload)
+        elif action is AnnotationEngineAction.SELECT_LABEL:
+            data.label = self.engine.select_label(payload, data.labels, data.label)
 
         # elif action is AnnotationEngineAction.START_CONSTRUCT_RECTANGLE:
         #     self.start_construct_rectangle(payload)

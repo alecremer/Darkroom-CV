@@ -7,12 +7,6 @@ import numpy as np
 
 class AnnotationEngine:
     
-    def __init__(self):
-        self.current_annotation = None
-        self.current_label: str = ""
-        self.file_index: int = 0
-        self.annotation: List[AnnotationCell] = []
-
     def resize_rectangle_by_original_img(self, img, original_img, rectangle: Rectangle) -> Rectangle:
         
         h, w = img.shape[:2]
@@ -56,10 +50,9 @@ class AnnotationEngine:
 
     
 
-    # def select_label(self, p: Point):
-    #     label = self.view.select_label(p)
-    #     if label: self.current_label = label
-
+    def select_label(self, label: str, labels: List[str], current_label: str):
+        if label in labels: return label
+        return current_label
 
     def exclude_box_from_annotation(self, p: Point, annotation: List[AnnotationCell], file_index: int):
         x, y = p

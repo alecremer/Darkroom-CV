@@ -1,3 +1,4 @@
+from annotation_transition.renderer.view.button_handler import Button
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from dataclasses import dataclass
 from entities.entities import Point, Rectangle, BoundingBox
@@ -13,13 +14,16 @@ class BtnView:
 
 class AnnotationView:
 
-    def __init__(self, labels):
+    def __init__(self, btns_templates: List[Button]):
         self.show_ui: bool = False
         self.label_btns: List[BtnView] = []
+        self.btns_templates = btns_templates
 
+        labels = [label.text for label in btns_templates]
         self.build_label_btns(labels)
 
     def build_label_btns(self, labels: List[str]):
+
         for i, label in enumerate(labels):
             
             x0, y0 = (10, 10 + i*40)
@@ -29,27 +33,20 @@ class AnnotationView:
             btn = BtnView(rect, label)
             
             self.label_btns.append(btn)
+        
+        for btn_view, btn in zip(self.label_btns, self.btns_templates):
+            btn.rect = btn_view.rect
 
-    def draw_label_buttons(self, img, labels, current_label):
+    def draw_label_buttons(self, img, current_label):
 
         for i, btn in enumerate(self.label_btns):
             color = (50, 50, 50)
             text_color = (0,255,0) if btn.text == current_label else (255,255,255)
-            text_x0, text_y0 = (20, 35 + i*40)
+            text_x0, text_y0 = (20, -8 + btn.rect.p.y)
 
             OpencvRenderPrimitives.draw_btn(img, btn.rect, color, text_color, text_x0, text_y0, btn.text, 0.8, 2)
 
 
-    def select_label(self, p: Point) -> str:
-        x, y = p
-        if self.show_ui:
-            for btn in self.label_btns:
-                x0, y0, x1, y1 = btn.rect.to_coords()
-                if x0 <= x <= x1 and y0 <= y <= y1:
-                    return btn.text
-
-        return None
-    
     def create_bounding_box_from_result(self, detection_result, frame, labels_to_annotate = None):
         boxes_detected = []
         for r in detection_result:

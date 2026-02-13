@@ -18,6 +18,7 @@ class ActionHandler:
                           AnnotationAction.ANNOTATE_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.TOGGLE_SHOW_UI,
+                          AnnotationAction.SELECT_LABEL,
                           AnnotationAction.QUIT,
                           AnnotationAction.UNDO_MASK_POINT,
                           AnnotationAction.ANNOTATE_BBOX}
@@ -54,6 +55,9 @@ class ActionHandler:
 
         elif action is AnnotationAction.UNDO_MASK_POINT:
             self.render_data.construct_poly.pop()
+
+        elif action is AnnotationAction.SELECT_LABEL:
+            self.render_data.select_label = True
 
         elif action is AnnotationAction.QUIT:
             self.on_quit_requested()

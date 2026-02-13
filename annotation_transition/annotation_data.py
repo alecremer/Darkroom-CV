@@ -9,3 +9,4 @@ class AnnotationData:
     file_index: int = 0
     img: Any | None = None
     label: str = ""
+    labels: List[str] = field(default_factory=list)

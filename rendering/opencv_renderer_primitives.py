@@ -40,7 +40,7 @@ class OpencvRenderPrimitives:
     def draw_btn(img, rect: Rectangle, color, text_color, text_origin_x, text_origin_y, text, font_size, text_thickness):
         x0, y0, x, y = rect.to_coords()
         cv2.rectangle(img, (x0, y0), (x, y), color, -1)
-        cv2.putText(img, text, (text_origin_x, text_origin_y), cv2.FONT_HERSHEY_SIMPLEX, font_size, color, text_thickness)
+        cv2.putText(img, text, (text_origin_x, text_origin_y), cv2.FONT_HERSHEY_SIMPLEX, font_size, text_color, text_thickness)
 
     
     @staticmethod

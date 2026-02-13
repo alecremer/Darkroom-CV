@@ -2,9 +2,10 @@ import cv2
 from entities.entities import BoundingBox
 import math
 
-class AnnotationMapper:
+class InferenceResultMapper:
 
-    def result_to_bounding_box(self, detection_result, labels_to_annotate = None):
+    @staticmethod
+    def result_to_bounding_box( detection_result, labels_to_annotate = None):
         detected = []
         for r in detection_result:
             for annotate_index, annotate_label in enumerate(labels_to_annotate):
@@ -28,8 +29,8 @@ class AnnotationMapper:
                         detected.append(bounding_box)
         return detected
 
-    
-    def get_masks_from_result(self, result, frame_ref):
+    @staticmethod
+    def get_masks_from_result(result, frame_ref):
         masks = []
         for r in result:
             if r.masks is not None and len(r.masks.data) > 0:

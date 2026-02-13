@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 from annotation_transition.annotation_opencv_factory import AnnotationOpencvFactory
 from annotation_transition.annotation_pipeline import AnnotationPipeline, AnnotateModelConfig
+from configs.detect_model_config import DetectModelConfig
 from entities.model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig
 from configs.video_inference_config import VideoInferenceConfig
@@ -70,13 +71,13 @@ class Engine:
         model_trained = YOLO(weight_path)
         result = model_trained.predict(test_path, show=show_image)[0] 
 
-    def annotate(self, img_path: str, annotate_model_config: List[AnnotateModelConfig]):
+    def annotate(self, img_path: str, detect_model_config: List[DetectModelConfig]):
         # annotation_tool = AnnotationPipeline()
         annotation_tool = AnnotationOpencvFactory()
-        weight_path = [config.weights_path for config in annotate_model_config]
+        # weight_path = [config.weights_path for config in detect_model_config]
         # models_trained = self._set_trained_models(weight_path)
-        models_trained = None
-        annotation_tool.annotate(img_path, annotate_model_config, models_trained)
+        # models_trained = None
+        annotation_tool.annotate(img_path, detect_model_config)
 
     def live(self, video_config: VideoInferenceConfig, config_path: str):
         video_app = VideoApp(video_config)

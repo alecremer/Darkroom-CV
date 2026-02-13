@@ -13,6 +13,7 @@ class ActionMapper:
                           AnnotationAction.QUIT,
                           AnnotationAction.EXCLUDE_CLICKED_ENTITY,
                           AnnotationAction.CREATE_MASK,
+                          AnnotationAction.SELECT_LABEL,
                           AnnotationAction.UPDATE}
 
     @staticmethod
@@ -26,4 +27,5 @@ class ActionMapper:
         elif action is AnnotationAction.QUIT: return "quit"
         elif action is AnnotationAction.EXCLUDE_CLICKED_ENTITY: return "exclude_entity"
         elif action is AnnotationAction.CREATE_MASK: return "done_mask"
+        elif action is AnnotationAction.SELECT_LABEL: return "select_label"
         elif action is AnnotationAction.RESET_ANNOTATION_CELL: return "reset_annotation_cell"

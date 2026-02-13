@@ -44,6 +44,7 @@ class ConfigResolver:
             if configs[cfg].get("annotate"):
                 annotate_config_dict.append(configs[cfg])
 
+
         return train_config_dict, detect_config_dict, annotate_config_dict
     
     def _config_to_list_of_instances(self, detect_config_dict: dict, train_config_dict: dict) -> Tuple[List[TrainModelConfig], List[DetectModelConfig]]:
@@ -68,6 +69,6 @@ class ConfigResolver:
 
         for annotate in annotate_config_dict:
             annotate: dict
-            annotate_cfg.append(AnnotateModelConfig(annotate.get("weights"), annotate["labels_to_annotate"], annotate.get("annotate_confidence", 0.5)))
+            annotate_cfg.append(AnnotateModelConfig(annotate.get("weights"), annotate["labels"], annotate.get("confidence", 0.5)))
 
         return annotate_cfg

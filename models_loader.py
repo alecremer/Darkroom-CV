@@ -13,6 +13,7 @@ class ModelsLoader:
         model.load_vitmae_seg(encoder_path, head_path)
 
         return model
+    
 
     @classmethod
     def load_models(self, model_configs: List[DetectModelConfig]) -> List[Model]:
