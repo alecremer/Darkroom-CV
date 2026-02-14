@@ -53,7 +53,7 @@ class AnnotationPipeline:
         self.folder_list = self.repo.filter_workdir()
         self.navigator = DatasetNavigator(self.folder_list)
 
-        self.action_handler = ActionHandler(self.engine, self.navigator)
+        self.action_handler = ActionHandler(self.engine, self.navigator, self.repo)
 
     def run(self, action: AnnotationEngineAction, payload: Any = None):
 

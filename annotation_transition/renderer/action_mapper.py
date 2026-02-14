@@ -13,6 +13,7 @@ class ActionMapper:
                           AnnotationAction.QUIT,
                           AnnotationAction.EXCLUDE_CLICKED_ENTITY,
                           AnnotationAction.CREATE_MASK,
+                          AnnotationAction.SAVE_ANNOTATIONS,
                           AnnotationAction.SELECT_LABEL,
                           AnnotationAction.UPDATE}
 
@@ -29,3 +30,4 @@ class ActionMapper:
         elif action is AnnotationAction.CREATE_MASK: return "done_mask"
         elif action is AnnotationAction.SELECT_LABEL: return "select_label"
         elif action is AnnotationAction.RESET_ANNOTATION_CELL: return "reset_annotation_cell"
+        elif action is AnnotationAction.SAVE_ANNOTATIONS: return "save_annotations"

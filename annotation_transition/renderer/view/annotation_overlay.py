@@ -36,7 +36,8 @@ class AnnotationOverlay:
             img = OpencvRenderPrimitives.render_poly(data.construct_poly, img, self.construct_poly_color)
             # img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
         
-        classes_masks = data.annotations[data.annotation_index].classes_masks
+        # classes_masks = data.annotations[data.annotation_index].classes_masks
+        classes_masks = data.current_annotation.classes_masks
         for masks in classes_masks:
             if len(masks) > 0:
                 for mask in masks:
@@ -44,7 +45,8 @@ class AnnotationOverlay:
                         poly = mask.points
                         img = OpencvRenderPrimitives.render_poly(poly, img)
         
-        excluded_masks = data.annotations[data.annotation_index].excluded_classes_masks
+        # excluded_masks = data.annotations[data.annotation_index].excluded_classes_masks
+        excluded_masks = data.current_annotation.excluded_classes_masks
         for mask in excluded_masks:
             if mask:
                 poly = mask.points

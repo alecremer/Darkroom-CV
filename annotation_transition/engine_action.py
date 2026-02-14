@@ -8,7 +8,7 @@ class AnnotationEngineAction(Enum):
     SELECT_LABEL = "select_label"
     PREVIOUS_IMG = "previous_img"
     RESET_ANNOTATION_CELL = "reset_annotation_cell"
-    SAVE_ANNOTATIONS = "save_annotation"
+    SAVE_ANNOTATIONS = "save_annotations"
     UNDO_MASK_POINT = "undo_mask_point"
     DONE_MASK = "done_mask"
     UPDATE = "update"

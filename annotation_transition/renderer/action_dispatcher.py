@@ -21,10 +21,8 @@ class ActionDispatcher:
         
         if ActionMapper.can_map(action):
             print(f"action {action}")
-            print(f"show ui before: {self.data.show_ui}")
             d = self.command_adapter.send(action, payload)
             self.data.update_from(d)
-            print(f"show ui after: {self.data.show_ui}")
 
         if self.handler.can_handle(action):
             self.handler.handle(action, payload)

@@ -2,6 +2,7 @@ from typing import List
 import numpy as np
 import torch
 import os
+from annotation_transition.annotation_cell import AnnotationCell
 from annotation_transition.tools import Tools
 from entities.entities import BoundingBox, PolygonalMask, Point
 import cv2
@@ -24,7 +25,7 @@ class AnnotationRepository:
         self.autosave = True
 
 
-    def save_annotations(self, annotations):
+    def save_annotations(self, annotations: List[AnnotationCell], labels: List[str], file_index: int):
         
         self.create_classes_file()
 
@@ -58,7 +59,7 @@ class AnnotationRepository:
                                 x_center = x1_norm + box_w_norm/2
                                 y_center = y1_norm + box_h_norm/2
                                 
-                                label_num = self.labels.index(box.label)
+                                label_num = labels.index(box.label)
                                 txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {box_w_norm:.6f} {box_h_norm:.6f}\n"
                                 f.write(txt_line)
                                 print(txt_line)
@@ -67,7 +68,7 @@ class AnnotationRepository:
                     for class_mask in annotation.classes_masks:
                         for mask in class_mask:
                             # why use fileindex???
-                            for excluded_mask in self.annotation[self.file_index].excluded_classes_masks:
+                            for excluded_mask in annotation[file_index].excluded_classes_masks:
                                 excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
                                 excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
 
@@ -77,7 +78,7 @@ class AnnotationRepository:
                                 if mask_array.shape == excluded_mask_array.shape:
                                     break
 
-                            label_num = self.labels.index(mask.label)
+                            label_num = labels.index(mask.label)
                             points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
                             points_str = " ".join(points_str_proto)
                             txt_line = f"{label_num} {points_str}\n"
