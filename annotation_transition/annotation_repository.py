@@ -67,8 +67,8 @@ class AnnotationRepository:
                     # save masks
                     for class_mask in annotation.classes_masks:
                         for mask in class_mask:
-                            # why use fileindex???
-                            for excluded_mask in annotation[file_index].excluded_classes_masks:
+                            excluded_mask = False
+                            for excluded_mask in annotation.excluded_classes_masks:
                                 excluded_points_list = [(p.x, p.y) for p in excluded_mask.points]
                                 excluded_mask_array = np.array(excluded_points_list, dtype=np.float32)
 
@@ -76,14 +76,15 @@ class AnnotationRepository:
                                 mask_array = np.array(mask_points_list, dtype=np.float32)
 
                                 if mask_array.shape == excluded_mask_array.shape:
-                                    break
-
-                            label_num = labels.index(mask.label)
-                            points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
-                            points_str = " ".join(points_str_proto)
-                            txt_line = f"{label_num} {points_str}\n"
-                            f.write(txt_line)
-                            print(txt_line)
+                                    excluded_mask = True
+                            
+                            if not excluded_mask:
+                                label_num = labels.index(mask.label)
+                                points_str_proto = (f"{p.x/w} {p.y/h}" for p in mask.points)
+                                points_str = " ".join(points_str_proto)
+                                txt_line = f"{label_num} {points_str}\n"
+                                f.write(txt_line)
+                                print(txt_line)
 
     def load_labels(self):
         label_extensions = {".txt"}
