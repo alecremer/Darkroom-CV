@@ -47,7 +47,6 @@ class AnnotationOverlay:
                 img = OpencvRenderPrimitives.render_poly(poly, img, self.excluded_color)
         
         self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
-        OpencvRenderPrimitives.resize_and_show(img)
 
     def _render_masks(self, img, classes_masks):
         for masks in classes_masks:
@@ -73,37 +72,43 @@ class AnnotationOverlay:
 
                         cv2.putText(img, text  + " " + str(conf), org, font, fontScale, text_color, thickness)
         return img
-
-    def draw_state(self, img, data: RenderData):
-
+    
+    def draw_text_box(self, img, text: str,x_anchor_percent: float, y_anchor_percent: float, 
+                      box_x_length: int, box_y_length: int, 
+                      font_scale: float = 0.5,
+                      thickness: int = 2, x_padding: int = 15, y_padding: int = 5, 
+                      text_color = (255, 255, 255), box_color = (50, 50, 50), alpha: float = 0.8):
         h, w = img.shape[:2]
-        x = 0.77 * w
-        y = 0.05 * h
+        x = x_anchor_percent * w
+        y = y_anchor_percent * h
         # object details
         org = [int(x), int(y)]
         font = cv2.FONT_HERSHEY_SIMPLEX
-        fontScale = 0.5
-        thickness = 2
 
         # draw contrast box
-        x_padding = 15
-        box_x_length = 35
-        box_y_length = 10
-        y_padding = 5
         x0b, y0b = (int(x - x_padding), int(y - y_padding - box_y_length))
         x1b, y1b = (int(x + box_x_length + x_padding), int(y  + y_padding))
-        # box_color = (10, 10, 10)
-        box_color = (50, 50, 50)
+
         overlay = img.copy()
-        alpha = 0.8
         cv2.rectangle(overlay, (x0b, y0b), (x1b, y1b), box_color, -1)
         img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
 
-        text, text_color = DrawStateMapper.map(data.draw_state)    
-        
-        cv2.putText(img, text, org, font, fontScale, text_color, thickness)
+        cv2.putText(img, text, org, font, font_scale, text_color, thickness)
         return img
     
+
+    def draw_state(self, img, data: RenderData):
+
+        text, text_color = DrawStateMapper.map(data.draw_state)    
+        img = self.draw_text_box(img, text, 0.77, 0.05, 35, 10, 0.5, 2, 15, 5, text_color)
+        return img
+    
+    def draw_number_of_imgs(self, img, data: RenderData):
+        text = f"images: {data.num_imgs_annotated}/{data.num_imgs_total}"
+        img = self.draw_text_box(img, text, 0.7, 0.08,
+                                 20, 5)
+        return img
+
     def draw_lasso_pixel_dist(self, img, data: RenderData):
 
         h, w = img.shape[:2]

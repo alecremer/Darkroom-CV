@@ -110,45 +110,48 @@ class AnnotationRepository:
         img_boxes = []
         classes_masks = [[]]
 
-        with open(os.path.join(self.labels_path, id + ".txt"), "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                values = line.split(" ")
-                cls = int(values[0])
+        path = os.path.join(self.labels_path, id + ".txt")
 
-                h, w = img.shape[:2]
-                if len(values) == 5: # rectangle
+        if os.path.isfile(path):
+            with open(path, "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    values = line.split(" ")
+                    cls = int(values[0])
+
+                    h, w = img.shape[:2]
+                    if len(values) == 5: # rectangle
 
 
-                    xc = float(values[1])
-                    yc = float(values[2])
-                    wb = float(values[3])
-                    hb = float(values[4])
+                        xc = float(values[1])
+                        yc = float(values[2])
+                        wb = float(values[3])
+                        hb = float(values[4])
 
-                    x1 = xc-wb/2
-                    x2 = xc+wb/2
-                    y1 = yc+hb/2
-                    y2 = yc-hb/2
-                    
-                    x1_scaled = x1*w
-                    x2_scaled = x2*w
-                    y1_scaled = y1*h
-                    y2_scaled = y2*h
+                        x1 = xc-wb/2
+                        x2 = xc+wb/2
+                        y1 = yc+hb/2
+                        y2 = yc-hb/2
+                        
+                        x1_scaled = x1*w
+                        x2_scaled = x2*w
+                        y1_scaled = y1*h
+                        y2_scaled = y2*h
 
-                    bb = BoundingBox(
-                        label=self.labels[cls],
-                        box = torch.tensor([min(x1_scaled, x2_scaled), min(y1_scaled, y2_scaled), max(x1_scaled, x2_scaled), max(y1_scaled, y2_scaled)], dtype=torch.float32),
-                        confidence=1.0
-                    )
-                    img_boxes.append([bb])
-                elif len(values) > 5: # mask
-                    poly = [Point(int(float(x)*w), int(float(y)*h)) for x, y in zip(values[1::2], values[2::2])]
-                    mask = PolygonalMask(
-                        label=self.labels[cls],
-                        points=poly,
-                        confidence=1.0
-                    )
-                    classes_masks.append([mask])
+                        bb = BoundingBox(
+                            label=self.labels[cls],
+                            box = torch.tensor([min(x1_scaled, x2_scaled), min(y1_scaled, y2_scaled), max(x1_scaled, x2_scaled), max(y1_scaled, y2_scaled)], dtype=torch.float32),
+                            confidence=1.0
+                        )
+                        img_boxes.append([bb])
+                    elif len(values) > 5: # mask
+                        poly = [Point(int(float(x)*w), int(float(y)*h)) for x, y in zip(values[1::2], values[2::2])]
+                        mask = PolygonalMask(
+                            label=self.labels[cls],
+                            points=poly,
+                            confidence=1.0
+                        )
+                        classes_masks.append([mask])
         return img_boxes, classes_masks
     
     def load_img(self, img_path, folder_list, file_index):

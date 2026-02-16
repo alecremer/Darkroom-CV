@@ -10,3 +10,5 @@ class AnnotationData:
     img: Any | None = None
     label: str = ""
     labels: List[str] = field(default_factory=list)
+    num_imgs_total: int = 0
+    num_imgs_annotated: int = 0

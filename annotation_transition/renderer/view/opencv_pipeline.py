@@ -7,6 +7,7 @@ from annotation_transition.renderer.view.mouse_handler import InputContext, Mous
 from annotation_transition.renderer.render_data import RenderData
 from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
 from annotation_transition.renderer.view.annotation_view import AnnotationView
+from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 
 class OpencvPipeline:
 
@@ -22,7 +23,7 @@ class OpencvPipeline:
         self.keyboard_handler.build()
 
         self.window_name = "Annotation"
-        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+        cv2.namedWindow(self.window_name)
         cv2.setMouseCallback(self.window_name, mouse_handler.mouse_callback, param=self.input_context)
 
     def routine(self, img: Any):
@@ -32,20 +33,25 @@ class OpencvPipeline:
         img = self.data.current_annotation.original_img.copy()
         self.keyboard_handler.routine(key)
         
+        self.overlay.render_annotation(img, self.data)
+
         if self.data.draw_state is not DrawState.IDLE:
             img = self.overlay.draw_state(img, self.data)
 
         if self.data.draw_state == DrawState.DRAWING_MASK_LASSO:
             img = self.overlay.draw_lasso_pixel_dist(img, self.data)
 
-
         if self.data.construct_box:
             self.overlay.draw_construct_box(img, self.data.construct_box)
 
-        self.overlay.render_annotation(img, self.data)
-        
+        img = self.overlay.draw_number_of_imgs(img, self.data)
+
         if self.data.show_ui:
             self.view.draw_label_buttons(img, self.data.label)
+
+        OpencvRenderPrimitives.resize_and_show(img)
+        
+
 
         screen_res = 1080, 720 #TODO find a best way 
         scale_width = screen_res[0] / self.data.current_annotation.original_img.shape[1]
