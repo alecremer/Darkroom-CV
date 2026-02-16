@@ -104,9 +104,9 @@ class AnnotationOverlay:
         return img
     
     def draw_number_of_imgs(self, img, data: RenderData):
-        text = f"images: {data.num_imgs_annotated}/{data.num_imgs_total}"
-        img = self.draw_text_box(img, text, 0.7, 0.08,
-                                 20, 5)
+        text = f"{data.num_imgs_annotated}/{data.num_imgs_total}"
+        img = self.draw_text_box(img, text, 0.8, 0.99,
+                                 60, 15, x_padding=5, y_padding=5)
         return img
 
     def draw_lasso_pixel_dist(self, img, data: RenderData):

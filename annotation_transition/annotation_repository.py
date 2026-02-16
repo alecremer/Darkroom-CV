@@ -106,6 +106,10 @@ class AnnotationRepository:
     def check_if_annotated(self, id):
         return id in [l.split(".")[0] for l in self.label_list_sorted]
 
+    def get_num_annotations(self):
+        num = len(os.listdir(self.labels_path))
+        return num if num > 0 else 0
+
     def load_annotation(self, img, id):
         img_boxes = []
         classes_masks = [[]]

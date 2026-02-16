@@ -50,6 +50,7 @@ class AnnotationPipeline:
         self.repo = AnnotationRepository(labels_to_annotate, img_path)
 
         self.repo.create_work_dir()
+        self.data.num_imgs_annotated = self.repo.get_num_annotations()
         self.folder_list = self.repo.filter_workdir()
         self.data.num_imgs_total = len(self.folder_list)
         self.navigator = DatasetNavigator(self.folder_list)
@@ -77,7 +78,8 @@ class AnnotationPipeline:
             annotation = AnnotationCell(id, img, img, img_boxes, classes_masks, [], [], True)
             self.data.annotations.append(annotation)
             self.data.current_annotation = annotation
-            self.data.num_imgs_annotated = self.data.file_index
+            if self.data.file_index > self.data.num_imgs_annotated:
+                self.data.num_imgs_annotated = self.data.file_index
 
 
         else:
