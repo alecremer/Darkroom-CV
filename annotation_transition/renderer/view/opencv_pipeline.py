@@ -38,14 +38,15 @@ class OpencvPipeline:
         if self.data.draw_state == DrawState.DRAWING_MASK_LASSO:
             img = self.overlay.draw_lasso_pixel_dist(img, self.data)
 
-        if self.data.show_ui:
-            self.view.draw_label_buttons(img, self.data.label)
 
         if self.data.construct_box:
             self.overlay.draw_construct_box(img, self.data.construct_box)
 
         self.overlay.render_annotation(img, self.data)
         
+        if self.data.show_ui:
+            self.view.draw_label_buttons(img, self.data.label)
+
         screen_res = 1080, 720 #TODO find a best way 
         scale_width = screen_res[0] / self.data.current_annotation.original_img.shape[1]
         scale_height = screen_res[1] / self.data.current_annotation.original_img.shape[0]

@@ -5,7 +5,7 @@ from entities.entities import Rectangle
 class OpencvRenderPrimitives:
     
     @staticmethod
-    def draw_rectangle(img, rect: Rectangle, color = (0, 255, 0), thickness = 2):
+    def draw_rectangle(img, rect: Rectangle, color = (0, 255, 0), thickness = 1):
         
         x0, y0, x, y = rect.to_coords()
         cv2.rectangle(img, (x0, y0), (x, y), color, thickness)
@@ -27,11 +27,11 @@ class OpencvRenderPrimitives:
             point_list = np.array(point_list, np.int32)
             overlay = img.copy()
             cv2.fillPoly(overlay, [point_list], (color[0], color[1], color[2], 0.5))
-            cv2.polylines(overlay, [point_list], True, (0, 0, 0), 2)
+            cv2.polylines(overlay, [point_list], True, (0, 0, 0), 1)
             img_overlay = cv2.addWeighted(overlay, 0.5, img, 1 - 0.5, 0)
             img = img_overlay
         for p in poly:
-            cv2.circle(img, (p.x, p.y), 10, color, -1)
+            cv2.circle(img, (p.x, p.y), 5, color, -1)
         return img
     
     

@@ -126,12 +126,13 @@ class AnnotationOverlay:
             x1, y1, x2, y2 = bb.box
             
             # put box in cam
-            cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 3)
+            color = (214, 211, 19)
+            cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
 
             # object details
-            org = [int(x1), int(y1)]
+            org = [int(x1) + 2, int(y1) + 15]
             font = cv2.FONT_HERSHEY_SIMPLEX
-            fontScale = 1
+            fontScale = 0.6
             thickness = 2
             text_color = (255, 0, 0)
 
