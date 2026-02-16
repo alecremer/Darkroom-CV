@@ -78,8 +78,8 @@ class AnnotationPipeline:
             annotation = AnnotationCell(id, img, img, img_boxes, classes_masks, [], [], True)
             self.data.annotations.append(annotation)
             self.data.current_annotation = annotation
-            if self.data.file_index > self.data.num_imgs_annotated:
-                self.data.num_imgs_annotated = self.data.file_index
+            if self.data.file_index + 1 > self.data.num_imgs_annotated:
+                self.data.num_imgs_annotated = self.data.file_index + 1
 
 
         else:
