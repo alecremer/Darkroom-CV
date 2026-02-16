@@ -30,6 +30,7 @@ class AnnotationEngine:
         annotation[file_index].classes_boxes.append([bb])
 
     def annotate_mask(self, mask: PolygonalMask, annotation: List[AnnotationCell], file_index: int):
+        mask.confidence = 1.0
         annotation[file_index].classes_masks.append([mask])
         
     # def done_or_create_polygon(self):

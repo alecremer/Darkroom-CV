@@ -15,7 +15,8 @@ class PayloadHandler:
         elif action is AnnotationAction.ANNOTATE_MASK:
             mask = PolygonalMask(
                     label=data.label,
-                    points=data.construct_poly
+                    points=data.construct_poly,
+                    confidence=1.0
                 )
             new_payload = mask
             return new_payload

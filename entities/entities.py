@@ -33,3 +33,4 @@ class Rectangle:
 class PolygonalMask:
     label: str
     points: List[Point]
+    confidence: float

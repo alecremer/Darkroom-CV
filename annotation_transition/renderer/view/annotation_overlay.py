@@ -4,7 +4,7 @@ from annotation_transition.annotation_cell import AnnotationCell
 from annotation_transition.renderer.render_data import RenderData
 from annotation_transition.renderer.view.draw_state_mapper import DrawStateMapper
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
-from entities.entities import BoundingBox, Rectangle
+from entities.entities import BoundingBox, PolygonalMask, Rectangle
 import math
 import numpy as np
 
@@ -35,13 +35,10 @@ class AnnotationOverlay:
         if len(data.construct_poly)>0:
             img = OpencvRenderPrimitives.render_poly(data.construct_poly, img, self.construct_poly_color)
         
+        # render masks
         classes_masks = data.current_annotation.classes_masks
-        for masks in classes_masks:
-            if len(masks) > 0:
-                for mask in masks:
-                    if mask:
-                        poly = mask.points
-                        img = OpencvRenderPrimitives.render_poly(poly, img)
+        img = self._render_masks(img, classes_masks)
+        
         
         excluded_masks = data.current_annotation.excluded_classes_masks
         for mask in excluded_masks:
@@ -51,6 +48,31 @@ class AnnotationOverlay:
         
         self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
         OpencvRenderPrimitives.resize_and_show(img)
+
+    def _render_masks(self, img, classes_masks):
+        for masks in classes_masks:
+            if len(masks) > 0:
+                for mask in masks:
+                    if mask:
+                        poly = mask.points
+                        img = OpencvRenderPrimitives.render_poly(poly, img)
+                        
+                        # get poly x, y min points
+                        x = min(p.x for p in poly)
+                        y = min(p.y for p in poly)
+
+                        # object details
+                        org = [int(x) + 2, int(y) + 15]
+                        font = cv2.FONT_HERSHEY_SIMPLEX
+                        fontScale = 0.6
+                        thickness = 2
+                        text_color = (255, 0, 0)
+                        mask: PolygonalMask
+                        text = mask.label
+                        conf = mask.confidence
+
+                        cv2.putText(img, text  + " " + str(conf), org, font, fontScale, text_color, thickness)
+        return img
 
     def draw_state(self, img, data: RenderData):
 

@@ -145,7 +145,8 @@ class AnnotationRepository:
                     poly = [Point(int(float(x)*w), int(float(y)*h)) for x, y in zip(values[1::2], values[2::2])]
                     mask = PolygonalMask(
                         label=self.labels[cls],
-                        points=poly
+                        points=poly,
+                        confidence=1.0
                     )
                     classes_masks.append([mask])
         return img_boxes, classes_masks
