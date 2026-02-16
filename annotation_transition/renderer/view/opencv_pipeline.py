@@ -31,13 +31,10 @@ class OpencvPipeline:
         img = self.data.current_annotation.original_img.copy()
         self.keyboard_handler.routine(key)
         
+        img = self.overlay.draw_state(img, self.data)
+
         if self.data.show_ui:
             self.view.draw_label_buttons(img, self.data.label)
-
-
-        # if self.data.select_label:
-        #     self.data.label_intent = self.view.select_label(self.data.mouse_xy)
-        #     self.data.select_label = False
 
         if self.data.construct_box:
             self.overlay.draw_construct_box(img, self.data.construct_box)

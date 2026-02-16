@@ -2,6 +2,7 @@ import cv2
 from typing import List
 from annotation_transition.annotation_cell import AnnotationCell
 from annotation_transition.renderer.render_data import RenderData
+from annotation_transition.renderer.view.draw_state_mapper import DrawStateMapper
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from entities.entities import BoundingBox, Rectangle
 import math
@@ -20,7 +21,6 @@ class AnnotationOverlay:
 
     def render_annotation(self, img, data: RenderData):
         current_annotation = data.current_annotation
-        # self.current_annotation.img = self.current_annotation.original_img.copy()
 
         # for list of boxes, render boxes
         for bb in current_annotation.classes_boxes:
@@ -34,9 +34,7 @@ class AnnotationOverlay:
         # render construct polygon
         if len(data.construct_poly)>0:
             img = OpencvRenderPrimitives.render_poly(data.construct_poly, img, self.construct_poly_color)
-            # img_copy = self.render_poly(self.poly, img_copy, (128, 128, 255))
         
-        # classes_masks = data.annotations[data.annotation_index].classes_masks
         classes_masks = data.current_annotation.classes_masks
         for masks in classes_masks:
             if len(masks) > 0:
@@ -45,16 +43,43 @@ class AnnotationOverlay:
                         poly = mask.points
                         img = OpencvRenderPrimitives.render_poly(poly, img)
         
-        # excluded_masks = data.annotations[data.annotation_index].excluded_classes_masks
         excluded_masks = data.current_annotation.excluded_classes_masks
         for mask in excluded_masks:
             if mask:
                 poly = mask.points
                 img = OpencvRenderPrimitives.render_poly(poly, img, self.excluded_color)
-            # img_copy = self.current_annotation.img.copy()
         
         self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
         OpencvRenderPrimitives.resize_and_show(img)
+
+    def draw_state(self, img, data: RenderData):
+
+        h, w = img.shape[:2]
+        x = 0.80 * w
+        y = 0.05 * h
+        # object details
+        org = [int(x), int(y)]
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = 0.5
+        thickness = 2
+
+        # draw contrast box
+        x_padding = 15
+        box_x_length = 95
+        box_y_length = 10
+        y_padding = 5
+        x0b, y0b = (int(x - x_padding), int(y - y_padding - box_y_length))
+        x1b, y1b = (int(x + box_x_length + x_padding), int(y  + y_padding))
+        box_color = (10, 10, 10)
+        overlay = img.copy()
+        alpha = 0.8
+        cv2.rectangle(overlay, (x0b, y0b), (x1b, y1b), box_color, -1)
+        img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+
+        text, text_color = DrawStateMapper.map(data.draw_state)    
+        
+        cv2.putText(img, text, org, font, fontScale, text_color, thickness)
+        return img
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]
