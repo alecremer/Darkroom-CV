@@ -18,6 +18,7 @@ class AnnotationOverlay:
         color = (0, 255, 0)
         thickness = 2
         OpencvRenderPrimitives.draw_rectangle(img, rect, color, thickness)
+        return img
 
     def render_annotation(self, img, data: RenderData):
         current_annotation = data.current_annotation
@@ -47,6 +48,7 @@ class AnnotationOverlay:
                 img = OpencvRenderPrimitives.render_poly(poly, img, self.excluded_color)
         
         self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
+        return img
 
     def _render_masks(self, img, classes_masks):
         for masks in classes_masks:

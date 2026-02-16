@@ -84,10 +84,10 @@ class ActionHandler:
 
         elif action is AnnotationAction.CHANGE_LASSO_POINT_DIST:
             if payload > 0:
-                if self.render_data.pixel_lasso_dist < 50:
+                if self.render_data.pixel_lasso_dist < 5000:
                     self.render_data.pixel_lasso_dist = self.render_data.pixel_lasso_dist + 5
             if payload < 0:
-                if self.render_data.pixel_lasso_dist > 10:
+                if self.render_data.pixel_lasso_dist > 5:
                     self.render_data.pixel_lasso_dist = self.render_data.pixel_lasso_dist - 5
 
     def _handle_app_action(self, action: AnnotationAction, payload: Any):

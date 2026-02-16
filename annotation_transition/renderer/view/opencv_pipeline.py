@@ -33,7 +33,7 @@ class OpencvPipeline:
         img = self.data.current_annotation.original_img.copy()
         self.keyboard_handler.routine(key)
         
-        self.overlay.render_annotation(img, self.data)
+        img = self.overlay.render_annotation(img, self.data)
 
         if self.data.draw_state is not DrawState.IDLE:
             img = self.overlay.draw_state(img, self.data)
@@ -42,7 +42,7 @@ class OpencvPipeline:
             img = self.overlay.draw_lasso_pixel_dist(img, self.data)
 
         if self.data.construct_box:
-            self.overlay.draw_construct_box(img, self.data.construct_box)
+            img = self.overlay.draw_construct_box(img, self.data.construct_box)
 
         img = self.overlay.draw_number_of_imgs(img, self.data)
 
