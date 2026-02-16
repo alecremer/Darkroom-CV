@@ -18,6 +18,7 @@ class ActionHandler:
                           AnnotationAction.START_CONSTRUCT_MASK_LASSO,
                           AnnotationAction.DRAW_CONSTRUCT_MASK,
                           AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO,
+                          AnnotationAction.CHANGE_LASSO_POINT_DIST,
                           AnnotationAction.ANNOTATE_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_BOX,
@@ -77,10 +78,17 @@ class ActionHandler:
             x, y = payload
             dist2 = (x - last_x)**2 + (y - last_y)**2
             
-            MIN_DIST = 10
-            if dist2 >= MIN_DIST**2:
+            
+            if dist2 >= self.render_data.pixel_lasso_dist**2:
                 points.append(payload)
-            # self.render_data.construct_poly.append(payload)
+
+        elif action is AnnotationAction.CHANGE_LASSO_POINT_DIST:
+            if payload > 0:
+                if self.render_data.pixel_lasso_dist < 50:
+                    self.render_data.pixel_lasso_dist = self.render_data.pixel_lasso_dist + 5
+            if payload < 0:
+                if self.render_data.pixel_lasso_dist > 10:
+                    self.render_data.pixel_lasso_dist = self.render_data.pixel_lasso_dist - 5
 
     def _handle_app_action(self, action: AnnotationAction, payload: Any):
 

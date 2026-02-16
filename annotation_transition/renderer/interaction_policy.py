@@ -55,6 +55,9 @@ class InteractionPolicy:
             elif state is DrawState.DRAWING_MASK:
                 action = AnnotationAction.DRAW_CONSTRUCT_MASK
 
-        
+        elif intent is InputIntent.WHEEL:
+            
+            if state is DrawState.DRAWING_MASK_LASSO:
+                action = AnnotationAction.CHANGE_LASSO_POINT_DIST
 
         return PolicyResult(action, next_state)

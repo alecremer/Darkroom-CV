@@ -59,11 +59,18 @@ class MouseHandler:
         
         self.mouse_callback_default(InputIntent.LMB_DOWN, x, y)
 
+    def wheel_callback(self, intent: InputIntent, flags):
+        result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
+
+        self.command_dispatcher.dispatch(result.action, flags)
+
+        if result.next_state:
+            self.data.draw_state = result.next_state
+
 
     def mouse_callback(self, event, x, y, flags, param: InputContext):
 
         self.x_y_mouse = OpencvRenderPrimitives.normalize_by_scale(x, y, param.resize_scale)
-
         if event == cv2.EVENT_MOUSEMOVE:
             self.mouse_move_callback(x, y)
             
@@ -78,3 +85,6 @@ class MouseHandler:
 
         if event == cv2.EVENT_LBUTTONDOWN:
             self.lmb_down_callback(x, y)
+
+        if event == cv2.EVENT_MOUSEWHEEL:
+            self.wheel_callback(InputIntent.WHEEL, flags)

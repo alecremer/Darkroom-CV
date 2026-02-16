@@ -8,3 +8,4 @@ class InputIntent(Enum):
     LMB_DOWN = 30,
     RMB_UP = 40,
     RMB_DOWN = 50,
+    WHEEL = 60,

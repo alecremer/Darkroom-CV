@@ -11,7 +11,7 @@ class DrawStateMapper:
         color = (55, 125, 222)
 
         if state is DrawState.IDLE:
-            text = "idle"
+            text = ""
             
         elif state is DrawState.DRAWING_RECTANGLE:
             color = (252, 102, 3)
@@ -20,5 +20,9 @@ class DrawStateMapper:
         elif state is DrawState.DRAWING_MASK:
             color = (55, 125, 222)
             text = "Mask"
+
+        elif state is DrawState.DRAWING_MASK_LASSO:
+            color = (123, 179, 39)
+            text = "Lasso"
             
         return text, color

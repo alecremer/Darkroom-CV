@@ -17,6 +17,7 @@ class RenderData:
     img: Any | None = None
     mouse_xy: Point | None = field(default_factory= lambda: Point(0, 0))
     draw_state: DrawState = DrawState.IDLE
+    pixel_lasso_dist = 10
 
     def update_from(self, other: "RenderData") -> None:
         # if not isinstance(other, type(self)):

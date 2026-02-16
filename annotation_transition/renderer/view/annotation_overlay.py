@@ -81,6 +81,38 @@ class AnnotationOverlay:
         
         cv2.putText(img, text, org, font, fontScale, text_color, thickness)
         return img
+    
+    def draw_lasso_pixel_dist(self, img, data: RenderData):
+
+        h, w = img.shape[:2]
+        x = 0.77 * w
+        y = 0.08 * h
+        # object details
+        org = [int(x), int(y)]
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        fontScale = 0.5
+        thickness = 2
+
+        # draw contrast box
+        x_padding = 15
+        box_x_length = 20
+        box_y_length = 5
+        y_padding = 5
+        x0b, y0b = (int(x - x_padding), int(y - y_padding - box_y_length))
+        x1b, y1b = (int(x + box_x_length + x_padding), int(y  + y_padding))
+        # box_color = (10, 10, 10)
+        box_color = (50, 50, 50)
+        overlay = img.copy()
+        alpha = 0.8
+        cv2.rectangle(overlay, (x0b, y0b), (x1b, y1b), box_color, -1)
+        img = cv2.addWeighted(overlay, alpha, img, 1 - alpha, 0)
+
+        text_color = (255, 255, 255)
+        text = str(data.pixel_lasso_dist)
+        
+        cv2.putText(img, text, org, font, fontScale, text_color, thickness)
+        return img
+
 
     def draw_guide_lines(self, img, x, y):
         h, w = img.shape[:2]

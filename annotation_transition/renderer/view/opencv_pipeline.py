@@ -1,5 +1,6 @@
 from typing import Any, List
 import cv2
+from annotation_transition.renderer.draw_state import DrawState
 from annotation_transition.renderer.view.button_handler import ButtonHandler
 from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
 from annotation_transition.renderer.view.mouse_handler import InputContext, MouseHandler
@@ -21,7 +22,7 @@ class OpencvPipeline:
         self.keyboard_handler.build()
 
         self.window_name = "Annotation"
-        cv2.namedWindow(self.window_name)
+        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.setMouseCallback(self.window_name, mouse_handler.mouse_callback, param=self.input_context)
 
     def routine(self, img: Any):
@@ -31,7 +32,11 @@ class OpencvPipeline:
         img = self.data.current_annotation.original_img.copy()
         self.keyboard_handler.routine(key)
         
-        img = self.overlay.draw_state(img, self.data)
+        if self.data.draw_state is not DrawState.IDLE:
+            img = self.overlay.draw_state(img, self.data)
+
+        if self.data.draw_state == DrawState.DRAWING_MASK_LASSO:
+            img = self.overlay.draw_lasso_pixel_dist(img, self.data)
 
         if self.data.show_ui:
             self.view.draw_label_buttons(img, self.data.label)
