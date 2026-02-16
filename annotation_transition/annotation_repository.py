@@ -21,7 +21,7 @@ class AnnotationRepository:
 
     def create_work_dir(self):
         os.makedirs(self.labels_path, exist_ok=True)
-        self.load_annotation = True
+        # self.load_annotation = True
         self.autosave = True
 
 
@@ -106,10 +106,9 @@ class AnnotationRepository:
     def check_if_annotated(self, id):
         return id in [l.split(".")[0] for l in self.label_list_sorted]
 
-    def load_annotation(self, img):
+    def load_annotation(self, img, id):
         img_boxes = []
         classes_masks = [[]]
-
 
         with open(os.path.join(self.labels_path, id + ".txt"), "r") as f:
             lines = f.readlines()

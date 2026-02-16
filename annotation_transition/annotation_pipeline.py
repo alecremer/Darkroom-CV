@@ -40,10 +40,10 @@ class AnnotationPipeline:
             for label in annotate_cfg.labels:
                 labels_to_annotate.append(label)
             annotate_confidence.append(annotate_cfg.confidence)
+
         print("annotate for classes: ")
         print(labels_to_annotate)
         self.labels = labels_to_annotate    
-        # self.label_to_index(labels_to_annotate)
         self.data.label = labels_to_annotate[0]
         self.data.labels = labels_to_annotate
 
@@ -64,6 +64,9 @@ class AnnotationPipeline:
             img, id = self.repo.load_img(self.img_path, self.folder_list, self.data.file_index)
             img_boxes = []
             classes_masks = [[]]
+
+            img_boxes, classes_masks = self.repo.load_annotation(img, id)
+
 
             #TODO: inference here
             # result: InferenceResult = self.inference_runner.inference(img)
