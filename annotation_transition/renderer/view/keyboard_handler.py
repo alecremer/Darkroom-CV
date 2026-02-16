@@ -20,7 +20,7 @@ class KeyboardHandler:
         cmds.append(KeyCommand('t', lambda: self.action_dispatcher.dispatch(AnnotationAction.RESET_ANNOTATION_CELL)))
         cmds.append(KeyCommand('e', lambda: self.action_dispatcher.dispatch(AnnotationAction.TOGGLE_SHOW_UI)))
         cmds.append(KeyCommand('s', lambda: self.action_dispatcher.dispatch(AnnotationAction.SAVE_ANNOTATIONS)))
-        cmds.append(KeyCommand('w', lambda: self.action_dispatcher.dispatch(AnnotationAction.UNDO_MASK_POINT)))
+        cmds.append(KeyCommand('w', lambda: self.action_dispatcher.dispatch(AnnotationAction.CANCEL_CONSTRUCT_MASK)))
         cmds.append(KeyCommand('f', lambda: self.action_dispatcher.dispatch(AnnotationAction.DONE_OR_CREATE_MASK)))
         cmds.append(KeyCommand('q', lambda: self.action_dispatcher.dispatch(AnnotationAction.QUIT)))
         cmds.append(KeyCommand('r', lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_RECTANGLE)))

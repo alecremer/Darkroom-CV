@@ -55,7 +55,7 @@ class AnnotationOverlay:
     def draw_state(self, img, data: RenderData):
 
         h, w = img.shape[:2]
-        x = 0.80 * w
+        x = 0.77 * w
         y = 0.05 * h
         # object details
         org = [int(x), int(y)]
@@ -65,12 +65,13 @@ class AnnotationOverlay:
 
         # draw contrast box
         x_padding = 15
-        box_x_length = 95
+        box_x_length = 35
         box_y_length = 10
         y_padding = 5
         x0b, y0b = (int(x - x_padding), int(y - y_padding - box_y_length))
         x1b, y1b = (int(x + box_x_length + x_padding), int(y  + y_padding))
-        box_color = (10, 10, 10)
+        # box_color = (10, 10, 10)
+        box_color = (50, 50, 50)
         overlay = img.copy()
         alpha = 0.8
         cv2.rectangle(overlay, (x0b, y0b), (x1b, y1b), box_color, -1)

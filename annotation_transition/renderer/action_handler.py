@@ -17,6 +17,7 @@ class ActionHandler:
                           AnnotationAction.DRAW_CONSTRUCT_MASK,
                           AnnotationAction.ANNOTATE_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
+                          AnnotationAction.CANCEL_CONSTRUCT_BOX,
                           AnnotationAction.TOGGLE_SHOW_UI,
                           AnnotationAction.SELECT_LABEL,
                           AnnotationAction.QUIT,
@@ -39,6 +40,10 @@ class ActionHandler:
 
         elif action is AnnotationAction.CANCEL_CONSTRUCT_MASK:
             self.render_data.construct_poly = []
+            self.render_data.draw_state = DrawState.IDLE
+
+        elif action is AnnotationAction.CANCEL_CONSTRUCT_BOX:
+            self.render_data.construct_box = None
 
         elif action is AnnotationAction.TOGGLE_SHOW_UI:
             self.render_data.show_ui = not self.render_data.show_ui 

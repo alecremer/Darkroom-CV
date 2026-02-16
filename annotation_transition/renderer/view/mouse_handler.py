@@ -23,7 +23,7 @@ class MouseHandler:
         self.btn_handler = button_handler
 
 
-    def mouse_callback_default(self, intent: InputIntent, x, y):
+    def mouse_callback_default(self, intent: InputIntent, x = None, y = None):
         result: PolicyResult = self.policy.decide(self.data.draw_state, intent)
 
         if x and y:

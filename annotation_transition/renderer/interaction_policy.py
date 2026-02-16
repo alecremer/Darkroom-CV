@@ -30,7 +30,11 @@ class InteractionPolicy:
         elif intent is InputIntent.RMB_UP:
 
             if state is DrawState.DRAWING_MASK:
-                action = AnnotationAction.CANCEL_CONSTRUCT_POLY
+                action = AnnotationAction.UNDO_MASK_POINT
+
+            if state is DrawState.DRAWING_RECTANGLE:
+                action = AnnotationAction.CANCEL_CONSTRUCT_BOX
+                next_state = DrawState.IDLE
 
         elif intent is InputIntent.LMB_DOWN:
 

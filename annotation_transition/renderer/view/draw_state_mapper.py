@@ -15,10 +15,10 @@ class DrawStateMapper:
             
         elif state is DrawState.DRAWING_RECTANGLE:
             color = (252, 102, 3)
-            text = "drawing box"
+            text = "Box"
 
         elif state is DrawState.DRAWING_MASK:
             color = (55, 125, 222)
-            text = "drawing mask"
+            text = "Mask"
             
         return text, color
