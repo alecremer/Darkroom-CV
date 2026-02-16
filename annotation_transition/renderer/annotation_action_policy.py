@@ -12,7 +12,11 @@ class ActionPolicy:
             if data.draw_state is DrawState.IDLE:
                 action = AnnotationAction.START_CONSTRUCT_MASK
 
-            if data.draw_state is DrawState.DRAWING_MASK:
+            if data.draw_state is DrawState.DRAWING_MASK or data.draw_state is DrawState.DRAWING_MASK_LASSO:
+                action = AnnotationAction.ANNOTATE_MASK
+
+        if action is AnnotationAction.START_CONSTRUCT_MASK_LASSO:
+            if data.draw_state is DrawState.DRAWING_MASK_LASSO:
                 action = AnnotationAction.ANNOTATE_MASK
 
         if action is AnnotationAction.UNDO_MASK_POINT:

@@ -12,6 +12,7 @@ class AnnotationAction(Enum):
     CANCEL_CONSTRUCT_MASK = 31
     SELECT_LABEL = 40
     START_CONSTRUCT_MASK = 50
+    START_CONSTRUCT_MASK_LASSO = 51
     EXCLUDE_CLICKED_ENTITY = 60
     NEXT_IMG = "next_img"
     PREVIOUS_IMG = "previous_img"

@@ -4,6 +4,7 @@ from annotation_transition.renderer.annotation_action import AnnotationAction
 from annotation_transition.renderer.draw_state import DrawState
 from annotation_transition.renderer.render_data import RenderData
 from entities.entities import Point, Rectangle
+import cv2
 
 class ActionHandler:
     def __init__(self, render_data: RenderData, on_quit_requested: callable):
@@ -14,6 +15,7 @@ class ActionHandler:
         return action in {AnnotationAction.START_CONSTRUCT_RECTANGLE,
                           AnnotationAction.DRAW_CONSTRUCT_RECTANGLE,
                           AnnotationAction.START_CONSTRUCT_MASK,
+                          AnnotationAction.START_CONSTRUCT_MASK_LASSO,
                           AnnotationAction.DRAW_CONSTRUCT_MASK,
                           AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO,
                           AnnotationAction.ANNOTATE_MASK,
@@ -62,9 +64,23 @@ class ActionHandler:
         elif action is AnnotationAction.DRAW_CONSTRUCT_MASK:
             self.render_data.construct_poly.append(payload)
 
-        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO:
+        elif action is AnnotationAction.START_CONSTRUCT_MASK_LASSO:
             self.render_data.draw_state = DrawState.DRAWING_MASK_LASSO
 
+        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO:
+            points = self.render_data.construct_poly
+            if not points:
+                points.append(payload)
+                return
+            
+            last_x, last_y = points[-1]
+            x, y = payload
+            dist2 = (x - last_x)**2 + (y - last_y)**2
+            
+            MIN_DIST = 10
+            if dist2 >= MIN_DIST**2:
+                points.append(payload)
+            # self.render_data.construct_poly.append(payload)
 
     def _handle_app_action(self, action: AnnotationAction, payload: Any):
 

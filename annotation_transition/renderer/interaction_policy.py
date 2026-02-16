@@ -22,6 +22,9 @@ class InteractionPolicy:
             if state is DrawState.DRAWING_RECTANGLE:
                 action = AnnotationAction.DRAW_CONSTRUCT_RECTANGLE
 
+            elif state is DrawState.DRAWING_MASK_LASSO:
+                action = AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO
+
         elif intent is InputIntent.LMB_UP:
 
             if state is DrawState.DRAWING_RECTANGLE:
@@ -29,7 +32,7 @@ class InteractionPolicy:
 
         elif intent is InputIntent.RMB_UP:
 
-            if state is DrawState.DRAWING_MASK:
+            if state is DrawState.DRAWING_MASK or state is DrawState.DRAWING_MASK_LASSO:
                 action = AnnotationAction.UNDO_MASK_POINT
 
             if state is DrawState.DRAWING_RECTANGLE:
