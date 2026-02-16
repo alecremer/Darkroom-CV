@@ -6,3 +6,4 @@ class DrawState(Enum):
     DRAWING_RECTANGLE = 20,
     STARTING_MASK = 30,
     DRAWING_MASK = 40,
+    DRAWING_MASK_LASSO = 41,

@@ -28,6 +28,7 @@ class KeyboardHandler:
         cmds.append(KeyCommand('d', lambda: self.action_dispatcher.dispatch(AnnotationAction.DONE_OR_CREATE_MASK)))
         cmds.append(KeyCommand('esc', lambda: self.action_dispatcher.dispatch(AnnotationAction.QUIT)))
         cmds.append(KeyCommand('e', lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_RECTANGLE)))
+        cmds.append(KeyCommand('c', lambda: self.action_dispatcher.dispatch(AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO)))
 
       
 

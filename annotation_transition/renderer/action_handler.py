@@ -15,6 +15,7 @@ class ActionHandler:
                           AnnotationAction.DRAW_CONSTRUCT_RECTANGLE,
                           AnnotationAction.START_CONSTRUCT_MASK,
                           AnnotationAction.DRAW_CONSTRUCT_MASK,
+                          AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO,
                           AnnotationAction.ANNOTATE_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_MASK,
                           AnnotationAction.CANCEL_CONSTRUCT_BOX,
@@ -23,8 +24,8 @@ class ActionHandler:
                           AnnotationAction.QUIT,
                           AnnotationAction.UNDO_MASK_POINT,
                           AnnotationAction.ANNOTATE_BBOX}
-
-    def handle(self, action: AnnotationAction, payload: Any):
+    
+    def _handle_box_action(self, action: AnnotationAction, payload: Any):
 
         if action is AnnotationAction.START_CONSTRUCT_RECTANGLE:
             p = self.render_data.mouse_xy
@@ -38,15 +39,15 @@ class ActionHandler:
         elif action is AnnotationAction.DRAW_CONSTRUCT_RECTANGLE:
             self.render_data.construct_box.p=payload
 
-        elif action is AnnotationAction.CANCEL_CONSTRUCT_MASK:
-            self.render_data.construct_poly = []
-            self.render_data.draw_state = DrawState.IDLE
-
         elif action is AnnotationAction.CANCEL_CONSTRUCT_BOX:
             self.render_data.construct_box = None
 
-        elif action is AnnotationAction.TOGGLE_SHOW_UI:
-            self.render_data.show_ui = not self.render_data.show_ui 
+
+    def _handle_mask_action(self, action: AnnotationAction, payload: Any):
+
+        if action is AnnotationAction.CANCEL_CONSTRUCT_MASK:
+            self.render_data.construct_poly = []
+            self.render_data.draw_state = DrawState.IDLE
 
         elif action is AnnotationAction.START_CONSTRUCT_MASK:
             self.render_data.draw_state = DrawState.DRAWING_MASK
@@ -55,14 +56,29 @@ class ActionHandler:
             self.render_data.draw_state = DrawState.IDLE
             self.render_data.construct_poly = []
 
-        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK:
-            self.render_data.construct_poly.append(payload)
-
         elif action is AnnotationAction.UNDO_MASK_POINT:
             self.render_data.construct_poly.pop()
 
-        elif action is AnnotationAction.SELECT_LABEL:
-            self.render_data.select_label = True
+        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK:
+            self.render_data.construct_poly.append(payload)
+
+        elif action is AnnotationAction.DRAW_CONSTRUCT_MASK_LASSO:
+            self.render_data.draw_state = DrawState.DRAWING_MASK_LASSO
+
+
+    def _handle_app_action(self, action: AnnotationAction, payload: Any):
+
+        if action is AnnotationAction.TOGGLE_SHOW_UI:
+            self.render_data.show_ui = not self.render_data.show_ui 
 
         elif action is AnnotationAction.QUIT:
             self.on_quit_requested()
+
+
+    def handle(self, action: AnnotationAction, payload: Any):
+
+        self._handle_app_action(action, payload)        
+        self._handle_box_action(action, payload)        
+        self._handle_mask_action(action, payload)        
+
+        
