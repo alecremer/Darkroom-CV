@@ -1,4 +1,3 @@
-from rtsp import rtsp_client
 from cli.cli import CLI
 
 if __name__ == "__main__":

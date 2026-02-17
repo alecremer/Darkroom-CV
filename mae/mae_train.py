@@ -121,7 +121,7 @@ class MAE_Train:
         batch_size = model_config.get('batch_size', 4)
         visualize_steps: bool = model_config.get("visualize_steps", False)
         VISUALIZATION_FREQ: int = model_config.get("visualize_frequency", 10)
-
+        visualize_dir = os.path.join(dataset, "reconstructions")
         
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -202,7 +202,8 @@ class MAE_Train:
                     model=model, 
                     val_loader=val_loader, 
                     epoch=epoch + 1, 
-                    device=device
+                    device=device,
+                    output_dir=visualize_dir
                 )
 
     # train_mae(dataset_arg, dataset_val_arg)

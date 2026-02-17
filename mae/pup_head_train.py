@@ -10,7 +10,7 @@ from torchvision.transforms.functional import to_pil_image
 
 # Importar o modelo definido no Passo 2
 from mae.dataset_path_mapper import DatasetPathMapper
-from mae.setr_pup_loader import SetrPupLoader, load_mae_segmenter, IMAGE_SIZE, NUM_CLASSES 
+from mae.setr_pup_loader import SetrPupLoader 
 
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ class SegmentationDataset(Dataset):
     """
     Carrega imagens e reconstrói máscaras a partir de arquivos YOLO (.txt) com polígonos.
     """
-    def __init__(self, dataset_path, image_size=IMAGE_SIZE, split="train"):
+    def __init__(self, dataset_path, image_size, split="train"):
         
         image_path, label_path = DatasetPathMapper.dataset_to_images_and_labels(dataset_path, split)
 
@@ -112,7 +112,7 @@ class SegmentationDataset(Dataset):
 # ==========================================================
 # FUNÇÃO PRINCIPAL DE TREINAMENTO
 # ==========================================================
-class PupHead:
+class PupHeadTrain:
     def save_model_checkpoint(self, model, path, epoch, loss):
         os.makedirs(os.path.dirname(path), exist_ok=True)
         torch.save({
@@ -127,8 +127,8 @@ class PupHead:
         """Reverte a normalização do ImageNet."""
         
         # Média e Desvio Padrão do ImageNet (para desnormalização)
-        IMAGENET_MEAN = tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
-        IMAGENET_STD = tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+        IMAGENET_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
+        IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
 
         # Garante que o tensor e o mean/std estejam no mesmo dispositivo para operação
         mean = IMAGENET_MEAN.to(tensor.device)
@@ -198,27 +198,44 @@ class PupHead:
                     
         model.train() 
 
-    def train(self, dataset_path: str, train_path: str, val_path: str, encoder_path: str, config: dict):
+    def train(self, dataset_path: str, train_path: str, val_path: str, config: dict):
 
         # head -> training
         # backbone -> fine tuning
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
-        loader = SetrPupLoader()
-        model = loader.load_mae_segmenter(encoder_path).to(device)
+        try:
+            encoder_path = config["encoder_path"]
+        except KeyError as e:
+            raise KeyError(f"Error: {e}")
+        
+        FINE_TUNE_EPOCHS = config.get("head_epochs", 100)
+        visualize_steps: bool = config.get("head_visualize_steps", False)
+        visualize_epochs = config.get("head_visualize_frequency", 10)
+        image_size = config.get("image_size", 224)
+        FT_LR = 1e-4 
+        FT_LR_HEAD = config.get("head_lr", 1e-4)
+        FT_LR_ENCODER = config.get("backbone_finetuning_lr", 1e-5)
+        try:
+            num_classes = config["num_classes"]
+        except KeyError as e:
+            raise KeyError(f"Error: {e}")
+        
+        
 
-        train_dataset = SegmentationDataset(dataset_path, split=train_path)
+        loader = SetrPupLoader()
+        model = loader.load_mae_segmenter(encoder_path, num_classes, image_size).to(device)
+
+        train_dataset = SegmentationDataset(dataset_path, image_size, split=train_path)
         train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 
-        val_dataset = SegmentationDataset(dataset_path, split=val_path)
+        val_dataset = SegmentationDataset(dataset_path, image_size, split=val_path)
         val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False)
         
         criterion = nn.CrossEntropyLoss().to(device)
         
-        FT_LR = 1e-4 
-        FT_LR_HEAD = config.get("head_lr", 1e-4)
-        FT_LR_ENCODER = config.get("backbone_finetuning_lr", 1e-5)
+        
 
         param_groups = [
             {'params': model.encoder.parameters(), 'lr': FT_LR_ENCODER},
@@ -232,9 +249,7 @@ class PupHead:
         # scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=FT_LR, 
         #                                           steps_per_epoch=len(train_loader), 
         #                                           epochs=30)
-        FINE_TUNE_EPOCHS = config.get("head_epochs", 100)
-        visualize_steps: bool = config.get("head_visualize_steps", False)
-        visualize_epochs = config.get("head_visualize_frequency", 10)
+        
 
         scheduler = optim.lr_scheduler.OneCycleLR(optimizer, 
                                                 max_lr=[FT_LR_ENCODER, FT_LR_HEAD], 
@@ -244,8 +259,8 @@ class PupHead:
 
         # Definições para Checkpoint e Visualização
         BEST_LOSS = float('inf')
-        CHECKPOINT_DIR = "segmentation_checkpoints"
-        VISUALS_DIR = "segmentation_visuals"
+        CHECKPOINT_DIR = os.path.join(dataset_path, "setrpup_checkpoints")
+        VISUALS_DIR = os.path.join(dataset_path, "setrpup_visuals")
 
         # 4. Loop de Treinamento
         print(f"Start Fine-Tuning")

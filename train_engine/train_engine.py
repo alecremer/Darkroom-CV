@@ -7,6 +7,8 @@ from configs.train_model_config import TrainModelConfig
 from mae.mae_train import MAE_Train
 from ultralytics import YOLO
 
+from mae.pup_head_train import PupHeadTrain
+
 class TrainEngine:
 
     def train_one_model(self, train_cfg: TrainModelConfig):
@@ -37,6 +39,11 @@ class TrainEngine:
         # map
         if model == 'vit-mae':
             mae_train = MAE_Train()
+            mae_train.train(root_path, train_path, val_path, model_config)
+
+        elif model == 'pup-head':
+            mae_train = PupHeadTrain()
+            model_config["num_classes"] = 2 #TODO: multiclasses support
             mae_train.train(root_path, train_path, val_path, model_config)
         
         # YOLO

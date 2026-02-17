@@ -62,7 +62,7 @@ class ConfigResolver:
 
             # train_cfg.append(TrainModelConfig(train["dataset"], train["epochs"], train["label"], train["device"],
             train_cfg.append(TrainModelConfig(train["dataset"], train["label"], train["device"],
-                                        train["model"], train["result_folder_name"], model_par_config=train.get("model_config", None)))
+                                        train["model"], train.get("result_folder_name", "run"), model_par_config=train.get("model_config", None)))
             
         return train_cfg, detect_cfg
 
