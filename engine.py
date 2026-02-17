@@ -12,49 +12,50 @@ from entities.model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig
 from configs.video_inference_config import VideoInferenceConfig
 from models_loader import ModelsLoader
+from train_engine.train_engine import TrainEngine
 from video_app.video_app import VideoApp
 
 
 
-class Train:
+# class Train:
 
-    @classmethod
-    def train_one_model(self, train_cfg: TrainModelConfig):
+#     @classmethod
+#     def train_one_model(self, train_cfg: TrainModelConfig):
         
-        # parse
-        epochs = train_cfg.epochs
-        path = train_cfg.dataset_path
-        device = train_cfg.device
-        model = train_cfg.model
-        results_folder_name = train_cfg.results_folder_name
+#         # parse
+#         epochs = train_cfg.epochs
+#         path = train_cfg.dataset_path
+#         device = train_cfg.device
+#         model = train_cfg.model
+#         results_folder_name = train_cfg.results_folder_name
 
-        model = YOLO("models/" + model)
+#         model = YOLO("models/" + model)
 
-        if train_cfg.model_par_config:
+#         if train_cfg.model_par_config:
 
-            results = model.train(data=(path + "/data.yaml"), device=device, 
-                            project=path + "/runs", name=results_folder_name, **train_cfg.model_par_config)
-        else:
-            results = model.train(data=(path + "/data.yaml"), epochs=epochs, device=device, 
-                            project=path + "/runs", name=results_folder_name, patience=50)
-        model.val()
+#             results = model.train(data=(path + "/data.yaml"), device=device, 
+#                             project=path + "/runs", name=results_folder_name, **train_cfg.model_par_config)
+#         else:
+#             results = model.train(data=(path + "/data.yaml"), epochs=epochs, device=device, 
+#                             project=path + "/runs", name=results_folder_name, patience=50)
+#         model.val()
 
-    @classmethod
-    def train(self, train_cfg_list: List[TrainModelConfig]):
+#     @classmethod
+#     def train(self, train_cfg_list: List[TrainModelConfig]):
 
-        if train_cfg_list and len(train_cfg_list) > 0:
+#         if train_cfg_list and len(train_cfg_list) > 0:
             
-            for cfg in train_cfg_list:
+#             for cfg in train_cfg_list:
 
-                self.train_one_model(cfg)
+#                 self.train_one_model(cfg)
 
-        else:
-            raise ValueError("train configuration could not be empty")
+#         else:
+#             raise ValueError("train configuration could not be empty")
 
 class Engine:
 
     
-    _train = Train()
+    _train = TrainEngine()
 
     # def __init__(self):
     #     # logging.getLogger("ultralytics").setLevel(logging.CRITICAL)

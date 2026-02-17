@@ -41,6 +41,7 @@ class CLI:
 
             elif self.args.run_mode == "train":
                 train_service = TrainAppService(self.args)
+                file_config_or_path = self.args.config_file_path if self.args.config_file_path else file_config_or_path
                 train_service.execute(file_config_or_path)
             
             elif self.args.run_mode == "annotate":

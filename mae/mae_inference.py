@@ -8,7 +8,7 @@ from .segmentation_model import load_mae_segmenter
 IMAGE_SIZE = 224 # Tamanho que você usou no pré-treinamento do MAE
 
 
-class MAE_Seg:
+class MAE_Inference:
 
     def load_vitmae_seg(self, encoder_path, head_path):
 

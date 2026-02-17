@@ -9,7 +9,7 @@ import cv2
 from torchvision.transforms.functional import to_pil_image
 
 # Importar o modelo definido no Passo 2
-from segmentation_model import load_mae_segmenter, IMAGE_SIZE, NUM_CLASSES 
+from mae.setr_pup import load_mae_segmenter, IMAGE_SIZE, NUM_CLASSES 
 
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -88,7 +88,7 @@ def visualize_segmentation_val(model, val_loader, save_path, epoch, device):
                 
     model.train() # Retorna ao modo treino
     
-class YourSegmentationDataset(Dataset):
+class SegmentationDataset(Dataset):
     """
     Carrega imagens e reconstrói máscaras a partir de arquivos YOLO (.txt) com polígonos.
     """
@@ -196,10 +196,10 @@ def fine_tune(dataset_path: str):
     
     # Substitua por caminhos e número de imagens reais
     
-    train_dataset = YourSegmentationDataset(dataset_path, split="train")
+    train_dataset = SegmentationDataset(dataset_path, split="train")
     train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
 
-    val_dataset = YourSegmentationDataset("/home/ale/Downloads/PI2/seg_50_stringing", split="test")
+    val_dataset = SegmentationDataset("/home/ale/Downloads/PI2/seg_50_stringing", split="test")
     val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False)
     
     # 3. Definir o Otimizador e a Função de Perda

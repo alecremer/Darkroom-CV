@@ -7,7 +7,7 @@ import os
 IMAGE_SIZE = 224 # Tamanho que você usou no pré-treinamento do MAE
 NUM_CLASSES = 2 # Ex: 0 (Fundo) e 1 (Stringing)
 
-class ViTMAE_Segmentation_Head(nn.Module):
+class SETRPUP(nn.Module):
     """
     Arquitetura de Segmentação usando o MAE Encoder como backbone.
     Faz a conversão dos tokens 1D do ViT para um feature map 2D e o decodifica.
@@ -88,7 +88,7 @@ def load_mae_segmenter(encoder_path: str = "mae_checkpoints/mae_encoder_for_segm
     vit_encoder.load_state_dict(torch.load(encoder_path), strict=False)
     
     # 4. Instanciar o modelo de segmentação
-    model = ViTMAE_Segmentation_Head(encoder=vit_encoder)
+    model = SETRPUP(encoder=vit_encoder)
     
     return model
 

@@ -1,3 +1,4 @@
+from pathlib import Path
 import yaml
 from typing import List, Tuple
 from configs.train_model_config import TrainModelConfig
@@ -7,7 +8,7 @@ from configs.annotate_model_config import AnnotateModelConfig
 class ConfigResolver:
 
     def parse_from_file(self, file_name_or_path="config.yaml"):
-
+        
         configs = self._get_configs_from_file(file_name_or_path)
         (train_config_dict, detect_config_dict, annotate_dict) = self._parse_configs_to_dict(configs)
         train_cfg, detect_cfg = self._config_to_list_of_instances(detect_config_dict, train_config_dict)
@@ -17,8 +18,8 @@ class ConfigResolver:
 
 
     def _get_configs_from_file(self, file_name_or_path="config.yaml") -> List[any]:
-
-        with open(file_name_or_path) as file_name:
+        path = Path(file_name_or_path)
+        with open(path) as file_name:
             try:
                 all_configs = yaml.safe_load(file_name)
             except:
@@ -60,7 +61,7 @@ class ConfigResolver:
         for train in train_config_dict:
 
             train_cfg.append(TrainModelConfig(train["dataset"], train["epochs"], train["label"], train["device"],
-                                        train["model"], train["result_folder_name"], model_par_config=train.get("model_par_config", None)))
+                                        train["model"], train["result_folder_name"], model_par_config=train.get("model_config", None)))
             
         return train_cfg, detect_cfg
 

@@ -1,4 +1,4 @@
-from mae.mae_seg import MAE_Seg
+from mae.mae_inference import MAE_Inference
 from typing import List
 from entities.model_types import ModelType, Model
 from ultralytics import YOLO
@@ -7,9 +7,9 @@ from entities.model_tasks import Task
 class ModelsLoader:
 
     @classmethod
-    def _load_vitmae_seg(self, encoder_path, head_path) -> MAE_Seg:
+    def _load_vitmae_seg(self, encoder_path, head_path) -> MAE_Inference:
 
-        model = MAE_Seg()
+        model = MAE_Inference()
         model.load_vitmae_seg(encoder_path, head_path)
 
         return model

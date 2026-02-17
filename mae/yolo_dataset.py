@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
-from os import path, listdir
+from os import path, listdir, sep
 import numpy as np
 from PIL import Image
 import cv2
@@ -49,7 +49,7 @@ class YOLODetectionDataset(Dataset):
         target = {"boxes": boxes, "labels": labels}
 
         if self.transform:
-            image = self.transform(image)
+            img = self.transform(img)
 
         return img, target
 
@@ -58,13 +58,21 @@ class YOLODetectionDataset(Dataset):
 class YOLOSegmentationDataset(Dataset):
 
     def __init__(self, dataset_path: str, image_size: int, transform = None, split: str = "train"):
-        self.images_dir = path.join(dataset_path, split, "images")
-        self.labels_dir = path.join(dataset_path, split, "labels")
+        path_joined = path.join(dataset_path, split)
+        search_pattern = f"{sep}images{sep}"
+        replace_pattern = f"{sep}labels{sep}"
+
+        label_path = path_joined.replace(search_pattern, replace_pattern)
+
+        # self.images_dir = path.join(dataset_path, "images", split)
+        # self.labels_dir = path.join(dataset_path, "labels", split)
+        self.images_dir = path_joined
+        self.labels_dir = label_path
         self.images_files = sorted(listdir(self.images_dir))
+
         self.transform = transform
         self.image_size = image_size
 
-        print(f"dataset path: {dataset_path}")
         
         if path.exists(self.images_dir):
             print(f"images path founded: {self.images_dir}")
