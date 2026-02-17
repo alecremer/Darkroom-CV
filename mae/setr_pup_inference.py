@@ -2,17 +2,18 @@
 import torchvision.transforms as T
 import cv2
 import torch
-from .segmentation_model import load_mae_segmenter
+from mae.setr_pup_loader import SetrPupLoader
 
 
 IMAGE_SIZE = 224 # Tamanho que você usou no pré-treinamento do MAE
 
 
-class MAE_Inference:
+class SetrPupInference:
 
-    def load_vitmae_seg(self, encoder_path, head_path):
+    def load_vitmae_seg(self, encoder_path: str, head_path: str, num_classes: int):
 
-        model = load_mae_segmenter(encoder_path).to(self.device)
+        loader = SetrPupLoader()
+        model = loader.load_mae_segmenter(encoder_path).to(self.device)
         checkpoint = torch.load(head_path, map_location=self.device, weights_only=True)
         model.load_state_dict(checkpoint['model_state_dict'])
         model.eval()

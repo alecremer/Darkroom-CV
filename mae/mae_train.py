@@ -119,6 +119,8 @@ class MAE_Train:
         epochs = model_config.get('epochs', 300)
         lr = model_config.get('lr', 1e-4)
         batch_size = model_config.get('batch_size', 4)
+        visualize_steps: bool = model_config.get("visualize_steps", False)
+        VISUALIZATION_FREQ: int = model_config.get("visualize_frequency", 10)
 
         
 
@@ -156,7 +158,6 @@ class MAE_Train:
         val_dataset = YOLOSegmentationDataset(dataset, image_size, transform, split=val_path) # Adiciona split
         val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
         
-        VISUALIZATION_FREQ = 10
         # sample_batch = next(iter(loader))
         # sample_imgs, _ = sample_batch
         # sample_imgs_batch = torch.stack(sample_imgs) # Não mover para o device ainda
@@ -178,7 +179,7 @@ class MAE_Train:
 
 
             for imgs, _ in loader:
-                optimizer.zero_grad() # por que tenho que zerar sempre
+                optimizer.zero_grad() 
                 imgs_batch = torch.stack(imgs).to(device)
                 outputs = model(pixel_values=imgs_batch, return_dict=True)
                 loss = outputs.loss
@@ -186,7 +187,7 @@ class MAE_Train:
                 loss.backward()
                 optimizer.step()
 
-                total_loss += loss.item() # o que o .item() faz
+                total_loss += loss.item()
                 num_batches += 1
 
             avg_loss = total_loss / num_batches
@@ -196,10 +197,10 @@ class MAE_Train:
                 encoder_state_dict = model.vit.state_dict()
                 torch.save(encoder_state_dict, encoder_save_path)
 
-            if (epoch + 1) % VISUALIZATION_FREQ == 0:
+            if visualize_steps and (epoch + 1) % VISUALIZATION_FREQ == 0:
                 self.visualize_mae_step(
                     model=model, 
-                    val_loader=val_loader, # Visualiza as 4 primeiras
+                    val_loader=val_loader, 
                     epoch=epoch + 1, 
                     device=device
                 )

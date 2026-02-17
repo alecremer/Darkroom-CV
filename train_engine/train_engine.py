@@ -12,7 +12,7 @@ class TrainEngine:
     def train_one_model(self, train_cfg: TrainModelConfig):
 
         # parse
-        epochs = train_cfg.epochs
+        # epochs = train_cfg.epochs
         path = train_cfg.dataset_path
         device = train_cfg.device
         model = train_cfg.model

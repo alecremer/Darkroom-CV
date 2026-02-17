@@ -6,6 +6,8 @@ import numpy as np
 from PIL import Image
 import cv2
 
+from mae.dataset_path_mapper import DatasetPathMapper
+
 class YOLODetectionDataset(Dataset):
 
     def __init__(self, dataset_path: str, transform = None):
@@ -58,15 +60,14 @@ class YOLODetectionDataset(Dataset):
 class YOLOSegmentationDataset(Dataset):
 
     def __init__(self, dataset_path: str, image_size: int, transform = None, split: str = "train"):
-        path_joined = path.join(dataset_path, split)
-        search_pattern = f"{sep}images{sep}"
-        replace_pattern = f"{sep}labels{sep}"
+        # path_joined = path.join(dataset_path, split)
+        # search_pattern = f"{sep}images{sep}"
+        # replace_pattern = f"{sep}labels{sep}"
 
-        label_path = path_joined.replace(search_pattern, replace_pattern)
+        # label_path = path_joined.replace(search_pattern, replace_pattern)
 
-        # self.images_dir = path.join(dataset_path, "images", split)
-        # self.labels_dir = path.join(dataset_path, "labels", split)
-        self.images_dir = path_joined
+        image_path, label_path = DatasetPathMapper.dataset_to_images_and_labels(dataset_path, split)
+        self.images_dir = image_path
         self.labels_dir = label_path
         self.images_files = sorted(listdir(self.images_dir))
 

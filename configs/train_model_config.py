@@ -4,7 +4,7 @@ from dataclasses import dataclass
 class TrainModelConfig:
 
     dataset_path: str
-    epochs: int
+    # epochs: int
     label: str
     device: str
     model: str

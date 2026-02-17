@@ -7,7 +7,7 @@ import os
 IMAGE_SIZE = 224 # Tamanho que você usou no pré-treinamento do MAE
 NUM_CLASSES = 2 # Ex: 0 (Fundo) e 1 (Stringing)
 
-class SETRPUP(nn.Module):
+class SetrPupLoader(nn.Module):
     """
     Arquitetura de Segmentação usando o MAE Encoder como backbone.
     Faz a conversão dos tokens 1D do ViT para um feature map 2D e o decodifica.
@@ -73,24 +73,24 @@ class SETRPUP(nn.Module):
         # mask_logits tem o tamanho [B, 2, 224, 224]
         return mask_logits
 
-def load_mae_segmenter(encoder_path: str = "mae_checkpoints/mae_encoder_for_segmentation.pth"):
-    # 1. Carregar a configuração base do MAE
-    config = ViTConfig.from_pretrained("facebook/vit-mae-base")
+    def load_mae_segmenter(self, encoder_path: str = "mae_checkpoints/mae_encoder_for_segmentation.pth"):
+        # 1. Carregar a configuração base do MAE
+        config = ViTConfig.from_pretrained("facebook/vit-mae-base")
 
-    # 2. Carregar o modelo ViT (APENAS o Encoder)
-    vit_encoder = ViTModel.from_pretrained("facebook/vit-mae-base", config=config)
-    
-    # 3. Carregar os pesos pré-treinados do seu arquivo
-    # encoder_path = "mae_checkpoints/mae_encoder_for_segmentation.pth"
-    if not os.path.exists(encoder_path):
-        raise FileNotFoundError(f"Erro: Arquivo {encoder_path} não encontrado. Execute o Passo 1 primeiro.")
-    
-    vit_encoder.load_state_dict(torch.load(encoder_path), strict=False)
-    
-    # 4. Instanciar o modelo de segmentação
-    model = SETRPUP(encoder=vit_encoder)
-    
-    return model
+        # 2. Carregar o modelo ViT (APENAS o Encoder)
+        vit_encoder = ViTModel.from_pretrained("facebook/vit-mae-base", config=config)
+        
+        # 3. Carregar os pesos pré-treinados do seu arquivo
+        # encoder_path = "mae_checkpoints/mae_encoder_for_segmentation.pth"
+        if not os.path.exists(encoder_path):
+            raise FileNotFoundError(f"Erro: Arquivo {encoder_path} não encontrado. Execute o Passo 1 primeiro.")
+        
+        vit_encoder.load_state_dict(torch.load(encoder_path), strict=False)
+        
+        # 4. Instanciar o modelo de segmentação
+        model = SetrPupLoader(encoder=vit_encoder)
+        
+        return model
 
 # Exemplo de uso
 # segmenter_model = load_mae_segmenter()
