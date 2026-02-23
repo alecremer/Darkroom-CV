@@ -1,5 +1,6 @@
 from inference_runners.model_wrapper import ModelWrapper
 from inference_runners.setr_pup_wrapper import SetrPupWrapper
+from inference_runners.swin_unet_wrapper import SwinUnetWrapper
 from setr_pup.setr_pup_inference import SetrPupInference
 from typing import List
 from entities.model_types import ModelType, Model
@@ -40,10 +41,15 @@ class ModelsLoader:
                         model.task = model.model.task
 
                     elif model_type == ModelType.SETR_PUP.value:
-                        print("carregou o lance la")
                         encoder_path = path["backbone"]
                         head_path = path["head"]
                         model.model: ModelWrapper = SetrPupWrapper(encoder_path, head_path) # type: ignore #TODO: multiclasses support
+                        model.task = Task.SEGMENTATION
+
+                        models_loaded.append(model)
+
+                    elif model_type == ModelType.SWIN_UNET.value:
+                        model.model: ModelWrapper = SwinUnetWrapper(path) # type: ignore #TODO: multiclasses support
                         model.task = Task.SEGMENTATION
 
                         models_loaded.append(model)
