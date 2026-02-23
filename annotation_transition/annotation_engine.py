@@ -46,7 +46,9 @@ class AnnotationEngine:
                     
                     excluded_box = False
                     for bb in annotation[file_index].excluded_classes_boxes:
-                        excluded_box =  torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
+                        excluded_box = torch.allclose(bb.box.to(torch.float32).cpu(), bounding_boxes.box.to(torch.float32).cpu(), atol=1e-3)
+                        print("êxcluded")
+                        print(excluded_box)
                         if excluded_box:
                             break
                         

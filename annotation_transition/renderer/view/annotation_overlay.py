@@ -26,10 +26,7 @@ class AnnotationOverlay:
         # for list of boxes, render boxes
         for bb in current_annotation.classes_boxes:
             self.bounding_box_to_image_box(img, bb)
-        
-        # render excluded boxes
-        self.bounding_box_to_image_box(img, current_annotation.excluded_classes_boxes, self.excluded_color)
-
+       
         # img_copy = current_annotation.img
 
         # render construct polygon
@@ -46,7 +43,11 @@ class AnnotationOverlay:
             if mask:
                 poly = mask.points
                 img = OpencvRenderPrimitives.render_poly(poly, img, self.excluded_color)
-        
+         
+        # render excluded boxes
+        self.bounding_box_to_image_box(img, current_annotation.excluded_classes_boxes, self.excluded_color)
+
+
         self.draw_guide_lines(img, data.mouse_xy.x, data.mouse_xy.y)
         return img
 
@@ -150,14 +151,13 @@ class AnnotationOverlay:
         cv2.line(img, (x, 0), (x, h), (0, 255, 0), 1)   # vertical
         cv2.line(img, (0, y), (w, y), (0, 255, 0), 1)   # horizontal
 
-    def bounding_box_to_image_box(self, img, bounding_boxes: List[BoundingBox], color = (255, 0, 255)):
+    def bounding_box_to_image_box(self, img, bounding_boxes: List[BoundingBox], color = (214, 211, 19)):
         if bounding_boxes == [[]]: return
         
         for bb in bounding_boxes:
             x1, y1, x2, y2 = bb.box
             
             # put box in cam
-            color = (214, 211, 19)
             cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
 
             # object details
