@@ -84,7 +84,7 @@ __args:__
 ### 2. Train:
 
 ```
-python3 main.py train
+python3 main.py train -p [path_to_config_file]
 ```
 
 > [!NOTE]
@@ -103,7 +103,7 @@ Processed logs are saved in the ```logs_processed``` folder
 ### 4. Annotation:
 run annotation call:<br>
 ```
-python3 main.py annotate -p [path_to_images]
+python3 main.py annotate -p [path_to_config_file]
 ```
 
 <br>
