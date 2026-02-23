@@ -87,7 +87,7 @@ python3 data_processing.py
 Processed logs are saved in the ```logs_processed``` folder
 <br>
 
-### 2. Annotation:
+### 4. Annotation:
 run annotation call:<br>
 ```
 python3 main.py annotate -p [path_to_images]
