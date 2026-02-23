@@ -82,7 +82,7 @@ __args:__
 <br><br>
 
 ### 2. Train:
-<br>
+
 ```
 python3 main.py train
 ```
