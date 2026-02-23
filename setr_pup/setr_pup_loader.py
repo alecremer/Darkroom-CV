@@ -2,7 +2,7 @@ import torch
 from transformers import ViTModel, ViTConfig
 import os
 
-from mae.setr_pup import SetrPup
+from setr_pup.setr_pup import SetrPup
 
 # Defina as dimensões para garantir a compatibilidade
 # IMAGE_SIZE = 224 # Tamanho que você usou no pré-treinamento do MAE

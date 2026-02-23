@@ -4,10 +4,12 @@ from pathlib import Path
 from typing import List
 import yaml
 from configs.train_model_config import TrainModelConfig
-from mae.mae_train import MAE_Train
+from vit_mae.vit_mae_train import VitMaeTrain
 from ultralytics import YOLO
 
-from mae.pup_head_train import PupHeadTrain
+from setr_pup.pup_head_train import PupHeadTrain
+from swin_mae.swin_mae_train import SwinMaeTrain
+from swin_unet.swin_unet import SwinUnetTrain
 
 class TrainEngine:
 
@@ -38,11 +40,20 @@ class TrainEngine:
 
         # map
         if model == 'vit-mae':
-            mae_train = MAE_Train()
+            mae_train = VitMaeTrain()
+            mae_train.train(root_path, train_path, val_path, model_config)
+
+        elif model == 'swin-mae':
+            mae_train = SwinMaeTrain()
             mae_train.train(root_path, train_path, val_path, model_config)
 
         elif model == 'pup-head':
             mae_train = PupHeadTrain()
+            model_config["num_classes"] = 2 #TODO: multiclasses support
+            mae_train.train(root_path, train_path, val_path, model_config)
+
+        elif model == 'swin-unet':
+            mae_train = SwinUnetTrain()
             model_config["num_classes"] = 2 #TODO: multiclasses support
             mae_train.train(root_path, train_path, val_path, model_config)
         
@@ -57,7 +68,7 @@ class TrainEngine:
             # else:
             #     results = model.train(data=(path + "/data.yaml"), epochs=epochs, device=device, 
             #                     project=path + "/runs", name=results_folder_name, patience=50)
-            model.val()
+                model.val()
 
     def train(self, train_cfg_list: List[TrainModelConfig]):
 

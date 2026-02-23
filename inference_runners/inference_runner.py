@@ -8,12 +8,13 @@ class InferenceRunner():
 
         self.models = ModelsLoader.load_models(models_config)
 
-    def inference(self, frame) -> InferenceResult:
+    def inference(self, frame) -> List[InferenceResult]:
         inference_results = []
         for m in self.models:
             inf_result = InferenceResult()
 
-            inf_result.results = m.model(frame, stream=True, conf=m.confidence)
+            # inf_result.results = m.model(frame, stream=True, conf=m.confidence)
+            inf_result.results = m.model.inference(frame, m.confidence)
             inf_result.task = m.task
 
             inference_results.append(inf_result)

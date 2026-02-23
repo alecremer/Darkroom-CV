@@ -10,7 +10,7 @@ class RenderData:
     construct_poly: List[Point] = field(default_factory=list)
     # annotations: List[AnnotationCell] = field(default_factory=list)
     current_annotation: AnnotationCell | None = None
-    annotation_index: int = 0
+    file_index: int = 0
     label: str = ""
     show_ui: bool = False
     select_label: bool = False

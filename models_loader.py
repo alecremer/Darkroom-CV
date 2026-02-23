@@ -1,4 +1,6 @@
-from mae.setr_pup_inference import SetrPupInference
+from inference_runners.model_wrapper import ModelWrapper
+from inference_runners.setr_pup_wrapper import SetrPupWrapper
+from setr_pup.setr_pup_inference import SetrPupInference
 from typing import List
 from entities.model_types import ModelType, Model
 from ultralytics import YOLO
@@ -6,13 +8,7 @@ from configs.detect_model_config import DetectModelConfig
 from entities.model_tasks import Task
 class ModelsLoader:
 
-    @classmethod
-    def _load_vitmae_seg(self, encoder_path, head_path) -> SetrPupInference:
-
-        model = SetrPupInference()
-        model.load_vitmae_seg(encoder_path, head_path)
-
-        return model
+    
     
 
     @classmethod
@@ -34,7 +30,7 @@ class ModelsLoader:
                     model = Model()
                     model.model_type = model_type
                     model.confidence = config.confidence
-                    model.label = config.label
+                    # model.label = config.label
 
                     if model_type == ModelType.YOLO.value:
                         
@@ -43,10 +39,11 @@ class ModelsLoader:
                         models_loaded.append(model)
                         model.task = model.model.task
 
-                    elif model_type == ModelType.VITMAE_SEG.value:
+                    elif model_type == ModelType.SETR_PUP.value:
+                        print("carregou o lance la")
                         encoder_path = path["backbone"]
                         head_path = path["head"]
-                        model.model = self._load_vitmae_seg(encoder_path, head_path)
+                        model.model: ModelWrapper = SetrPupWrapper(encoder_path, head_path) # type: ignore #TODO: multiclasses support
                         model.task = Task.SEGMENTATION
 
                         models_loaded.append(model)

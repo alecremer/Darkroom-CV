@@ -3,7 +3,7 @@ from torchvision.utils import save_image
 from torch import nn, optim
 import torch
 from torchvision import datasets, transforms
-from mae.yolo_dataset import YOLODetectionDataset, YOLOSegmentationDataset
+from setr_pup.yolo_dataset import YOLODetectionDataset, YOLOSegmentationDataset
 from transformers import ViTMAEForPreTraining, ViTConfig
 import sys
 import os
@@ -15,7 +15,7 @@ IMAGENET_DEFAULT_MEAN = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
 IMAGENET_DEFAULT_STD = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
 
 
-class MAE_Train:
+class VitMaeTrain:
 
     def unnormalize(self, tensor):
         """Desnormaliza o tensor de volta para a faixa [0, 1]."""
@@ -132,7 +132,7 @@ class MAE_Train:
 
         # load dataset
         shuffle = True
-        collate_fn = lambda x: tuple(zip(*x)) # o que???
+        collate_fn = lambda x: tuple(zip(*x)) 
         best_loss = float('inf')
 
         # transform = transforms.Compose([
@@ -173,7 +173,7 @@ class MAE_Train:
 
         print("Starting train...")
         for epoch in range(epochs):
-            model.train() # o que essa funcao faz se estou percorrendo as imagens depois?
+            model.train() 
             total_loss = 0
             num_batches = 0
 

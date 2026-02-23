@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 import cv2
 
-from mae.dataset_path_mapper import DatasetPathMapper
+from setr_pup.dataset_path_mapper import DatasetPathMapper
 
 class YOLODetectionDataset(Dataset):
 

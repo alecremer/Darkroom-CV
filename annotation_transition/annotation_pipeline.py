@@ -2,6 +2,8 @@ import cv2
 from dataclasses import dataclass
 from typing import Any, Tuple, List
 import os
+
+from matplotlib import pyplot as plt
 from annotation_transition.action_handler import ActionHandler
 from annotation_transition.annotation_cell import AnnotationCell
 from annotation_transition.annotation_data import AnnotationData
@@ -10,6 +12,8 @@ from annotation_transition.annotation_repository import AnnotationRepository
 from annotation_transition.dataset_navigator import DatasetNavigator
 from annotation_transition.engine_action import AnnotationEngineAction
 from configs.detect_model_config import DetectModelConfig
+from dataset_analysis.ceav import CEAV
+from dataset_analysis.ceav_exploration import CEAV_Exploration
 from entities.model_types import ModelType, Model
 from configs.annotate_model_config import AnnotateModelConfig
 from entities.entities import BoundingBox, PolygonalMask, Point
@@ -57,6 +61,8 @@ class AnnotationPipeline:
 
         self.action_handler = ActionHandler(self.engine, self.navigator, self.repo)
 
+        CEAV_Exploration.explore(self.img_path, self.data.num_imgs_total, self.folder_list, self.repo)
+
     def run(self, action: AnnotationEngineAction, payload: Any = None):
 
         self.action_handler.handle_navigation(action, self.data)
@@ -65,15 +71,25 @@ class AnnotationPipeline:
         if len(self.data.annotations) < self.data.file_index + 1:
             img, id = self.repo.load_img(self.img_path, self.folder_list, self.data.file_index)
             img_boxes = []
-            classes_masks = [[]]
+            classes_masks = []
 
             img_boxes, classes_masks = self.repo.load_annotation(img, id)
 
-
-            #TODO: inference here
-            # result: InferenceResult = self.inference_runner.inference(img)
-            # for k, v in vars(result).items():
-            #     print(f"{k}: {v}")
+            # inference_in_all_frames = False
+            inference_in_all_frames = True
+            merge_masks = False
+            
+            if (len(img_boxes) == 0 and len(classes_masks) == 0) or inference_in_all_frames:
+                result: List[InferenceResult] = self.inference_runner.inference(img)
+                masks = []
+                
+                for r in result:
+                    masks.append(r.results)
+                    if merge_masks:
+                        classes_masks.append(r.results)
+                
+                if not merge_masks:
+                    classes_masks = masks
 
             annotation = AnnotationCell(id, img, img, img_boxes, classes_masks, [], [], True)
             self.data.annotations.append(annotation)

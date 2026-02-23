@@ -112,7 +112,7 @@ class AnnotationRepository:
 
     def load_annotation(self, img, id):
         img_boxes = []
-        classes_masks = [[]]
+        classes_masks = []
 
         path = os.path.join(self.labels_path, id + ".txt")
 

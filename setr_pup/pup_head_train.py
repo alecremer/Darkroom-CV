@@ -9,8 +9,8 @@ import cv2
 from torchvision.transforms.functional import to_pil_image
 
 # Importar o modelo definido no Passo 2
-from mae.dataset_path_mapper import DatasetPathMapper
-from mae.setr_pup_loader import SetrPupLoader 
+from setr_pup.dataset_path_mapper import DatasetPathMapper
+from setr_pup.setr_pup_loader import SetrPupLoader 
 
 from PIL import Image
 import matplotlib.pyplot as plt
@@ -109,9 +109,8 @@ class SegmentationDataset(Dataset):
         
         return img_tensor, mask_label
 
-# ==========================================================
-# FUNÇÃO PRINCIPAL DE TREINAMENTO
-# ==========================================================
+
+
 class PupHeadTrain:
     def save_model_checkpoint(self, model, path, epoch, loss):
         os.makedirs(os.path.dirname(path), exist_ok=True)

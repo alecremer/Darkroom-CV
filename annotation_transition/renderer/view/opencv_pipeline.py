@@ -1,5 +1,6 @@
 from typing import Any, List
 import cv2
+import numpy as np
 from annotation_transition.renderer.draw_state import DrawState
 from annotation_transition.renderer.view.button_handler import ButtonHandler
 from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
@@ -7,6 +8,7 @@ from annotation_transition.renderer.view.mouse_handler import InputContext, Mous
 from annotation_transition.renderer.render_data import RenderData
 from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
 from annotation_transition.renderer.view.annotation_view import AnnotationView
+from dataset_analysis.ceav import CEAV
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 
 class OpencvPipeline:
@@ -49,8 +51,8 @@ class OpencvPipeline:
         if self.data.show_ui:
             self.view.draw_label_buttons(img, self.data.label)
 
+
         OpencvRenderPrimitives.resize_and_show(img)
-        
 
 
         screen_res = 1080, 720 #TODO find a best way 

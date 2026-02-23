@@ -5,7 +5,7 @@ from entities.model_tasks import Task
 
 class ModelType(Enum):
     YOLO: str = "YOLO"
-    VITMAE_SEG: str = "VITMAE_SEG"
+    SETR_PUP: str = "SETR-PUP"
 
 @dataclass
 class Model:

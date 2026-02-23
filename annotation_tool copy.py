@@ -613,7 +613,7 @@ class AnnotationTool:
                                 masks = self.get_masks_from_result(result, img)
                                 classes_masks.append(masks)
                                 # boxes = self.create_bounding_box_to_annotate(result, img, labels_to_annotate[index])
-                        elif m.model_type == ModelType.VITMAE_SEG.value:
+                        elif m.model_type == ModelType.SETR_PUP.value:
                             predict_mask = m.model.predict_from_image(img)
                             predict_mask_8bit = (predict_mask * 255).astype(np.uint8)
                             contours_list = cv2.findContours(predict_mask_8bit, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)

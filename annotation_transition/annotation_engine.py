@@ -33,24 +33,6 @@ class AnnotationEngine:
         mask.confidence = 1.0
         annotation[file_index].classes_masks.append([mask])
         
-    # def done_or_create_polygon(self):
-    #     mask = PolygonalMask(
-    #         label=self.current_label,
-    #         points=self.poly
-    #     )
-    #     self.annotation[self.file_index].classes_masks.append([mask])
-
-
-    # def annotate_bbox_from_construct_rect(self):
-    #     img = self.current_annotation.img
-    #     original_img = self.current_annotation.original_img
-    #     rectangle = self.construct_rectangle
-    #     rectangle_normalized = self.resize_rectangle_by_original_img(img, original_img, rectangle)
-
-    #     self.annotate_bbox(rectangle_normalized, self.current_label)        
-
-    
-
     def select_label(self, label: str, labels: List[str], current_label: str):
         if label in labels: return label
         return current_label
