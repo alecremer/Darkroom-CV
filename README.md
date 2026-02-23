@@ -1,6 +1,6 @@
 # Vision
 ## Description
-This API provides tools to simplify training and running multiple AI models, as well as performing hardware stress tests and automatic performance logging.
+This framework provides tools to annotate, train and run multiple AI models, as well as performing hardware stress tests and automatic performance logging.
 
 ### Features:
 - __Train multiple AIs in a stack__
