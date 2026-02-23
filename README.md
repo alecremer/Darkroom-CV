@@ -17,6 +17,17 @@ This project was built with a focus on maintainability, scalability, and practic
 
 ---
 
+## Demos
+
+Bounging boxes annotation:
+https://github.com/user-attachments/assets/784cf68f-b737-4a60-bbda-e79808b6d954
+
+Masks annotation:
+https://github.com/user-attachments/assets/7e74a936-5892-43cb-8388-97bcfac533f0
+
+
+---
+
 ## Core Capabilities
 
 ### AI-Assisted Annotation Workflow
