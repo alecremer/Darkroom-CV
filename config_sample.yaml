@@ -1,33 +1,42 @@
 sample_object:
 
   dataset: /path_to_object/dataset
-  weights: /path_to_object/dataset/runs/run_300_epochs/weights/best.pt
+
+  # for inference
+  weights: [{path: /path_to_weights/best.pt,
+              type: SWIN-UNET # YOLO, SETR-PUP
+              }]
+  # for SETR-PUP:
+  # weights: [{
+  #         path: {
+  #           backbone: path_to_mae_encoder/mae_encoder_for_segmentation.pth,
+  #           head: path_to_mae_head/best_model.pth
+  #           },
+  #         type: SETR-PUP
+  #         }]
+  
+  labels: ['sample_object_1', 'sample_object_2']
   confidence: 0.1
-  label: sample_object
-  epochs: 300
-  device: cpu
-  result_folder_name: run_300_epochs
-  model: yolo11n.pt
-  train: false
+  result_folder_name: results
+
+  device: cpu # or cuda
+  model: yolo11n.pt # train model, setr-pup, vit-mae, swin-mae, swin-unet, pup-head 
+  model_config: {
+    epochs: 50,
+    patience: 20,
+    
+    # for autoencoders
+    visualize_steps: true,
+    visualize_frequency: 25,
+
+    # for heads train
+    head_epochs: 300,
+    head_visualize_steps: true,
+    head_visualize_frequency: 25,
+    encoder_path: path_to_encoder/setrpup_encoder.pth
+  }
+
+  # tasks 
+  train: false 
   detect: true
-
-
-sample_object_segmentation:
-
-  dataset: /path_to_object_seg/dataset/sample_object_segmentation
-  weights: /path_to_object_seg/dataset/sample_object_segmentation/runs/run_300_epochs/weights/best.pt
-  confidence: 0.5
-  label: sample_object_segmentation
-  epochs: 300
-  device: cpu
-  result_folder_name: run_300_epochs
-  model: yolo11n-seg.pt
-  train: false
-  detect: false
-  segmentation: true
-
-annotation:
-  weights: "/path_to_weights/best.pt"
-  labels_to_annotate: ['class1', 'class2', 'class3', 'class4']
-  annotate_confidence: 0.5
   annotate: true
