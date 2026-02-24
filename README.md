@@ -105,6 +105,11 @@ run annotation call:<br>
 ```
 python3 main.py annotate -p [path_to_config_file]
 ```
+run demo:<br>
+```
+python3 main.py annotate -demo
+```
+
 
 <br>
 
