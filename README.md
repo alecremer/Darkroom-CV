@@ -17,6 +17,19 @@ This project was built with a focus on maintainability, scalability, and practic
 
 ---
 
+## Demos
+
+Bounging boxes annotation:
+
+https://github.com/user-attachments/assets/784cf68f-b737-4a60-bbda-e79808b6d954
+
+Masks annotation:
+
+https://github.com/user-attachments/assets/7e74a936-5892-43cb-8388-97bcfac533f0
+
+
+---
+
 ## Core Capabilities
 
 ### AI-Assisted Annotation Workflow
@@ -69,9 +82,9 @@ __args:__
 <br><br>
 
 ### 2. Train:
-run train :)<br>
+
 ```
-python3 main.py train
+python3 main.py train -p [path_to_config_file]
 ```
 
 > [!NOTE]
@@ -90,7 +103,7 @@ Processed logs are saved in the ```logs_processed``` folder
 ### 4. Annotation:
 run annotation call:<br>
 ```
-python3 main.py annotate -p [path_to_images]
+python3 main.py annotate -p [path_to_config_file]
 ```
 
 <br>
