@@ -145,21 +145,3 @@ All AI settings are defined in the ```config.yaml``` file.
 
 - ```segmentation:``` true or false, set true if segmentation AI 
 
-## Segmentation from boxes
-Create segmentation dataset from bounding boxes dataset
-
-1. Configure paths in segmentation [config file](#segmentation-configuration-file)
-
-2. In seg_from_boxes folder, run ```python3 seg.py```
-
-### Segmentation configuration file
-
-__parameters:__ 
-
-- ```raw_path:``` path to folder containing raw images folder and labels folder
-
-- ```save_path:``` path to save segmentation dataset
-
-- ```save_path_prefix:``` create parent folder for save path, can be empty
-
-- ```epochs:``` train epochs -->
