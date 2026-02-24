@@ -20,7 +20,8 @@ class ActionDispatcher:
         payload = PayloadHandler.handle(action, self.data, payload)
         
         if ActionMapper.can_map(action):
-            print(f"action {action}")
+            # DEBUG
+            # print(f"action {action}")
             d = self.command_adapter.send(action, payload)
             self.data.update_from(d)
 

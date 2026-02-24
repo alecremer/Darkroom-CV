@@ -62,7 +62,6 @@ class AnnotationRepository:
                                 label_num = labels.index(box.label)
                                 txt_line = f"{label_num} {x_center:.6f} {y_center:.6f} {box_w_norm:.6f} {box_h_norm:.6f}\n"
                                 f.write(txt_line)
-                                print(txt_line)
 
                     # save masks
                     for class_mask in annotation.classes_masks:
@@ -84,7 +83,7 @@ class AnnotationRepository:
                                 points_str = " ".join(points_str_proto)
                                 txt_line = f"{label_num} {points_str}\n"
                                 f.write(txt_line)
-                                print(txt_line)
+            print("Save done!")
 
     def load_labels(self):
         label_extensions = {".txt"}

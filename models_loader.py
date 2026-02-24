@@ -16,7 +16,6 @@ class ModelsLoader:
     def load_models(self, model_configs: List[DetectModelConfig]) -> List[Model]:
 
         weight_paths = [m.weights_path for m in model_configs]
-        print(f"weights_path: {weight_paths}")
         models_loaded = []
 
         for config in model_configs:
@@ -27,7 +26,6 @@ class ModelsLoader:
                 model_type = p["type"]
 
                 if path:
-                    print(path)
                     model = Model()
                     model.model_type = model_type
                     model.confidence = config.confidence

@@ -29,8 +29,6 @@ class Runner:
 
         train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
         
-        print("detect_model_cfg")
-        print(annotate_cfg)
         # engine.annotate(img_path, annotate_cfg)
         engine.annotate(img_path, annotate_cfg)
 
@@ -38,6 +36,5 @@ class Runner:
         engine = Engine()
         train_model_cfg, detect_model_cfg, annotate_cfg = ConfigResolver().parse_from_file(file_config_or_path)
 
-        print(detect_model_cfg)
         for detect_cfg in detect_model_cfg:
             engine.test(detect_cfg.weights_path, detect_cfg.test_path, show_image=True)
