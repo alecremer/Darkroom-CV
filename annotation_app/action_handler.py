@@ -1,9 +1,9 @@
 from typing import Any
-from annotation_transition.annotation_data import AnnotationData
-from annotation_transition.annotation_engine import AnnotationEngine
-from annotation_transition.annotation_repository import AnnotationRepository
-from annotation_transition.dataset_navigator import DatasetNavigator
-from annotation_transition.engine_action import AnnotationEngineAction
+from annotation_app.annotation_data import AnnotationData
+from annotation_app.annotation_engine import AnnotationEngine
+from annotation_app.annotation_repository import AnnotationRepository
+from annotation_app.dataset_navigator import DatasetNavigator
+from annotation_app.engine_action import AnnotationEngineAction
 
 class ActionHandler:
 

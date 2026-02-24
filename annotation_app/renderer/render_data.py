@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
-from annotation_transition.annotation_cell import AnnotationCell
-from annotation_transition.renderer.draw_state import DrawState
+from annotation_app.annotation_cell import AnnotationCell
+from annotation_app.renderer.draw_state import DrawState
 from entities.entities import BoundingBox, PolygonalMask, Rectangle, Point
 from typing import Any, List
 

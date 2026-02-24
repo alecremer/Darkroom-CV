@@ -1,4 +1,4 @@
-from annotation_transition.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.annotation_action import AnnotationAction
 
 
 class ActionMapper:

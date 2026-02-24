@@ -1,8 +1,8 @@
 from typing import Any, List
-from annotation_transition.annotation_pipeline import AnnotationPipeline
-from annotation_transition.engine_action import AnnotationEngineAction
-from annotation_transition.renderer.annotation_action import AnnotationAction
-from annotation_transition.renderer.annotation_controller import AnnotationController
+from annotation_app.annotation_pipeline import AnnotationPipeline
+from annotation_app.engine_action import AnnotationEngineAction
+from annotation_app.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.annotation_controller import AnnotationController
 from configs.annotate_model_config import AnnotateModelConfig
 from configs.detect_model_config import DetectModelConfig
 from entities.model_types import Model

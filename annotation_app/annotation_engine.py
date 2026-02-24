@@ -1,4 +1,4 @@
-from annotation_transition.annotation_cell import AnnotationCell
+from annotation_app.annotation_cell import AnnotationCell
 from entities.entities import BoundingBox, PolygonalMask, Rectangle, Point
 from typing import List, Any
 import torch

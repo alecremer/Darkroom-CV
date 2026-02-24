@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
-from annotation_transition.renderer.action_dispatcher import ActionDispatcher
-from annotation_transition.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.action_dispatcher import ActionDispatcher
+from annotation_app.renderer.annotation_action import AnnotationAction
 from enum import Enum
 
 @dataclass

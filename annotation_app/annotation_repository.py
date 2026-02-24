@@ -2,8 +2,8 @@ from typing import List
 import numpy as np
 import torch
 import os
-from annotation_transition.annotation_cell import AnnotationCell
-from annotation_transition.tools import Tools
+from annotation_app.annotation_cell import AnnotationCell
+from annotation_app.tools import Tools
 from entities.entities import BoundingBox, PolygonalMask, Point
 import cv2
 

@@ -1,8 +1,8 @@
 import cv2
 from typing import List
-from annotation_transition.annotation_cell import AnnotationCell
-from annotation_transition.renderer.render_data import RenderData
-from annotation_transition.renderer.view.draw_state_mapper import DrawStateMapper
+from annotation_app.annotation_cell import AnnotationCell
+from annotation_app.renderer.render_data import RenderData
+from annotation_app.renderer.view.draw_state_mapper import DrawStateMapper
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from entities.entities import BoundingBox, PolygonalMask, Rectangle
 import math

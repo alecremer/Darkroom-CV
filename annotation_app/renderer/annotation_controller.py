@@ -1,16 +1,16 @@
-from annotation_transition.renderer.action_handler import ActionHandler
-from annotation_transition.renderer.action_dispatcher import ActionDispatcher
-from annotation_transition.renderer.annotation_action import AnnotationAction
-from annotation_transition.renderer.command_adapter import CommandAdapter
-from annotation_transition.renderer.interaction_policy import InteractionPolicy
-from annotation_transition.renderer.view.button_handler import Button, ButtonHandler
-from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
-from annotation_transition.renderer.view.mouse_handler import MouseHandler
-from annotation_transition.renderer.render_data import RenderData
-from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
-from annotation_transition.renderer.view.annotation_view import AnnotationView
+from annotation_app.renderer.action_handler import ActionHandler
+from annotation_app.renderer.action_dispatcher import ActionDispatcher
+from annotation_app.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.command_adapter import CommandAdapter
+from annotation_app.renderer.interaction_policy import InteractionPolicy
+from annotation_app.renderer.view.button_handler import Button, ButtonHandler
+from annotation_app.renderer.view.keyboard_handler import KeyboardHandler
+from annotation_app.renderer.view.mouse_handler import MouseHandler
+from annotation_app.renderer.render_data import RenderData
+from annotation_app.renderer.view.annotation_overlay import AnnotationOverlay
+from annotation_app.renderer.view.annotation_view import AnnotationView
 from typing import List
-from annotation_transition.renderer.view.opencv_pipeline import OpencvPipeline
+from annotation_app.renderer.view.opencv_pipeline import OpencvPipeline
 
 class AnnotationController:
 

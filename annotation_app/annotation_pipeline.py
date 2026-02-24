@@ -4,13 +4,13 @@ from typing import Any, Tuple, List
 import os
 
 from matplotlib import pyplot as plt
-from annotation_transition.action_handler import ActionHandler
-from annotation_transition.annotation_cell import AnnotationCell
-from annotation_transition.annotation_data import AnnotationData
-from annotation_transition.annotation_engine import AnnotationEngine
-from annotation_transition.annotation_repository import AnnotationRepository
-from annotation_transition.dataset_navigator import DatasetNavigator
-from annotation_transition.engine_action import AnnotationEngineAction
+from annotation_app.action_handler import ActionHandler
+from annotation_app.annotation_cell import AnnotationCell
+from annotation_app.annotation_data import AnnotationData
+from annotation_app.annotation_engine import AnnotationEngine
+from annotation_app.annotation_repository import AnnotationRepository
+from annotation_app.dataset_navigator import DatasetNavigator
+from annotation_app.engine_action import AnnotationEngineAction
 from configs.detect_model_config import DetectModelConfig
 from dataset_analysis.ceav import CEAV
 from dataset_analysis.ceav_exploration import CEAV_Exploration
@@ -61,7 +61,8 @@ class AnnotationPipeline:
 
         self.action_handler = ActionHandler(self.engine, self.navigator, self.repo)
 
-        CEAV_Exploration.explore(self.img_path, self.data.num_imgs_total, self.folder_list, self.repo)
+        # dataset metric experiment (bypassed)
+        # CEAV_Exploration.explore(self.img_path, self.data.num_imgs_total, self.folder_list, self.repo)
 
     def run(self, action: AnnotationEngineAction, payload: Any = None):
 

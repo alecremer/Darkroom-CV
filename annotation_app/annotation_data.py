@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Any, List
-from annotation_transition.annotation_cell import AnnotationCell
+from annotation_app.annotation_cell import AnnotationCell
 
 @dataclass
 class AnnotationData:

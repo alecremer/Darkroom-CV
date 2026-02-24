@@ -1,8 +1,8 @@
 from typing import Any
 
-from annotation_transition.renderer.annotation_action import AnnotationAction
-from annotation_transition.renderer.draw_state import DrawState
-from annotation_transition.renderer.render_data import RenderData
+from annotation_app.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.draw_state import DrawState
+from annotation_app.renderer.render_data import RenderData
 from entities.entities import Point, Rectangle
 import cv2
 

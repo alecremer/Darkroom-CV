@@ -5,8 +5,8 @@ import math
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple
-from annotation_transition.annotation_opencv_factory import AnnotationOpencvFactory
-from annotation_transition.annotation_pipeline import AnnotationPipeline, AnnotateModelConfig
+from annotation_app.annotation_opencv_factory import AnnotationOpencvFactory
+from annotation_app.annotation_pipeline import AnnotationPipeline, AnnotateModelConfig
 from configs.detect_model_config import DetectModelConfig
 from entities.model_types import ModelType, Model
 from configs.train_model_config import TrainModelConfig

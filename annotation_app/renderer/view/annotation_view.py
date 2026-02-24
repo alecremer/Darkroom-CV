@@ -1,4 +1,4 @@
-from annotation_transition.renderer.view.button_handler import Button
+from annotation_app.renderer.view.button_handler import Button
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 from dataclasses import dataclass
 from entities.entities import Point, Rectangle, BoundingBox

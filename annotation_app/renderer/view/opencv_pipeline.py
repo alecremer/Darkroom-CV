@@ -1,13 +1,13 @@
 from typing import Any, List
 import cv2
 import numpy as np
-from annotation_transition.renderer.draw_state import DrawState
-from annotation_transition.renderer.view.button_handler import ButtonHandler
-from annotation_transition.renderer.view.keyboard_handler import KeyboardHandler
-from annotation_transition.renderer.view.mouse_handler import InputContext, MouseHandler
-from annotation_transition.renderer.render_data import RenderData
-from annotation_transition.renderer.view.annotation_overlay import AnnotationOverlay
-from annotation_transition.renderer.view.annotation_view import AnnotationView
+from annotation_app.renderer.draw_state import DrawState
+from annotation_app.renderer.view.button_handler import ButtonHandler
+from annotation_app.renderer.view.keyboard_handler import KeyboardHandler
+from annotation_app.renderer.view.mouse_handler import InputContext, MouseHandler
+from annotation_app.renderer.render_data import RenderData
+from annotation_app.renderer.view.annotation_overlay import AnnotationOverlay
+from annotation_app.renderer.view.annotation_view import AnnotationView
 from dataset_analysis.ceav import CEAV
 from rendering.opencv_renderer_primitives import OpencvRenderPrimitives
 

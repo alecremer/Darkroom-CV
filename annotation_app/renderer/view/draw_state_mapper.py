@@ -1,4 +1,4 @@
-from annotation_transition.renderer.draw_state import DrawState
+from annotation_app.renderer.draw_state import DrawState
 
 
 class DrawStateMapper:

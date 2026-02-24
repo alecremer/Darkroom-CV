@@ -1,11 +1,11 @@
 from typing import Any
-from annotation_transition.renderer.action_handler import ActionHandler
-from annotation_transition.renderer.action_mapper import ActionMapper
-from annotation_transition.renderer.annotation_action import AnnotationAction
-from annotation_transition.renderer.annotation_action_policy import ActionPolicy
-from annotation_transition.renderer.command_adapter import CommandAdapter
-from annotation_transition.renderer.payload_handler import PayloadHandler
-from annotation_transition.renderer.render_data import RenderData
+from annotation_app.renderer.action_handler import ActionHandler
+from annotation_app.renderer.action_mapper import ActionMapper
+from annotation_app.renderer.annotation_action import AnnotationAction
+from annotation_app.renderer.annotation_action_policy import ActionPolicy
+from annotation_app.renderer.command_adapter import CommandAdapter
+from annotation_app.renderer.payload_handler import PayloadHandler
+from annotation_app.renderer.render_data import RenderData
 
 
 class ActionDispatcher:
