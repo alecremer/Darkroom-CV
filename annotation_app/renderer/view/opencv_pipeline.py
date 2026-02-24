@@ -23,6 +23,7 @@ class OpencvPipeline:
         
         self.input_context = InputContext(1920)
         self.keyboard_handler.build()
+        self.keyboard_handler.key_presentation()
 
         self.window_name = "Annotation"
         cv2.namedWindow(self.window_name)

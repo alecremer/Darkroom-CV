@@ -8,6 +8,7 @@ from enum import Enum
 class KeyCommand:
     key: str
     action: callable
+    description: str
 
 
 class KeyboardHandler:
@@ -19,18 +20,48 @@ class KeyboardHandler:
 
     def build(self):
         cmds: List[KeyCommand] = []
-        cmds.append(KeyCommand('f', lambda: self.action_dispatcher.dispatch(AnnotationAction.NEXT_IMG)))
-        cmds.append(KeyCommand('s', lambda: self.action_dispatcher.dispatch(AnnotationAction.PREVIOUS_IMG)))
-        cmds.append(KeyCommand('r', lambda: self.action_dispatcher.dispatch(AnnotationAction.RESET_ANNOTATION_CELL)))
-        cmds.append(KeyCommand('w', lambda: self.action_dispatcher.dispatch(AnnotationAction.TOGGLE_SHOW_UI)))
-        cmds.append(KeyCommand('a', lambda: self.action_dispatcher.dispatch(AnnotationAction.SAVE_ANNOTATIONS)))
-        cmds.append(KeyCommand('q', lambda: self.action_dispatcher.dispatch(AnnotationAction.CANCEL_CONSTRUCT_MASK)))
-        cmds.append(KeyCommand('d', lambda: self.action_dispatcher.dispatch(AnnotationAction.DONE_OR_CREATE_MASK)))
-        cmds.append(KeyCommand('esc', lambda: self.action_dispatcher.dispatch(AnnotationAction.QUIT)))
-        cmds.append(KeyCommand('e', lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_RECTANGLE)))
-        cmds.append(KeyCommand('c', lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_MASK_LASSO)))
+        cmds.append(KeyCommand('f', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.NEXT_IMG),
+        "Next image")
+        )
+        cmds.append(KeyCommand('s', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.PREVIOUS_IMG),
+        "Previous image")
+        )
+        cmds.append(KeyCommand('r', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.RESET_ANNOTATION_CELL),
+        "Reset image annotations")
+        )
+        cmds.append(KeyCommand('w', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.TOGGLE_SHOW_UI),
+        "Show/Hide images")
+        )
+        cmds.append(KeyCommand('a', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.SAVE_ANNOTATIONS),
+        "Save annotations")
+        )
+        cmds.append(KeyCommand('q', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.CANCEL_CONSTRUCT_MASK),
+        "Cancel mask")
+        )
+        cmds.append(KeyCommand('d', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.DONE_OR_CREATE_MASK),
+        "Draw/done mask")
+        )
+        cmds.append(KeyCommand('e', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_RECTANGLE),
+        "Draw rectangle")
+        )
+        cmds.append(KeyCommand('c', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.START_CONSTRUCT_MASK_LASSO),
+        "Lasso mask")
+        )
+        cmds.append(KeyCommand('esc', 
+        lambda: self.action_dispatcher.dispatch(AnnotationAction.QUIT),
+        "Quit")
+        )
 
-      
+    
 
         self.commands = cmds
 
@@ -47,3 +78,12 @@ class KeyboardHandler:
             cmd: KeyCommand
             if self._key_matches(pressed_key, cmd.key):
                 cmd.action()
+
+    def key_presentation(self):
+        print("--------------------------------------------")
+        print("Commands")
+        print("--------------------------------------------")
+        for key in self.commands:
+            key: KeyCommand = key
+            print(f"{key.key}: {key.description}")
+
